@@ -4,6 +4,17 @@ def changeToStandardForm(c,A,b,signs):
     # TODO: Validation of input
     # TODO: Add additional rows for artificial variables and slack variables
 
+    validInput=True
+    for i in range(0,len(b)):
+        if b[i]<0:
+            validInput=False
+        if not(signs[i]==1 or signs[i]==0 or signs[i]==-1):
+            validInput=False
+
+    if not(len(A)==len(b)==len(signs)) or validInput==False or not(len(c)==len(A[0])):
+        print("Invalid Input.")
+        return c,A,b,0,0
+
     basicIndicies = np.array([])
     artificalIndicies = np.array([])
     numConstraints = len(signs)
@@ -52,3 +63,15 @@ def changeToStandardForm(c,A,b,signs):
 # print(A)
 # print(basicIndicies)
 # print(artificalIndicies)
+
+c = -np.array([1, 4, 7,3])
+A = np.array([[2, 1, 2, 3], [3, -1, -2, 2]])
+b = np.array([10, 5])
+signs = np.array([-1,0]) # 1 is >= , -1 is <= , 0 is =
+
+c,A,b,basicIndicies,artificalIndicies = changeToStandardForm(c,A,b,signs)
+
+
+print(A)
+print(basicIndicies)
+print(artificalIndicies)
