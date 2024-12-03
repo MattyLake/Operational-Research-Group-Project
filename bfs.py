@@ -3,6 +3,12 @@ import numpy as np
 def changeToStandardForm(c,A,b,signs):
     # TODO: Validation of input
     # TODO: Add additional rows for artificial variables and slack variables
+    M=1
+    for i in range(0,len(A)):
+        for j in range(0,len(A[1])):
+
+            M=M*A[i,j]
+    M=abs(M*100)
 
     validInput=True
     for i in range(0,len(b)):
@@ -26,6 +32,7 @@ def changeToStandardForm(c,A,b,signs):
                     newColumn[j,0]=1
                     A=np.append(A,newColumn,axis=1)
                     basicIndicies=np.append(basicIndicies,len(A[1])-1)
+                    c=np.append(c,0)
 
         elif signs[i]==1:
             for j in range(0,numConstraints):
@@ -33,11 +40,13 @@ def changeToStandardForm(c,A,b,signs):
                 if j==i:
                     newColumn[j,0]=-1
                     A=np.append(A,newColumn,axis=1)
+                    c = np.append(c, 0)
                     newColumn=np.zeros((numConstraints,1))
                     newColumn[j,0]=1
                     A=np.append(A,newColumn,axis=1)
                     basicIndicies=np.append(basicIndicies,len(A[1])-1)
                     artificalIndicies = np.append(artificalIndicies, len(A[1]) - 1)
+                    c = np.append(c, M)
 
         elif signs[i]==0:
             newColumn=np.zeros((numConstraints,1))
@@ -47,6 +56,8 @@ def changeToStandardForm(c,A,b,signs):
                     A=np.append(A,newColumn,axis=1)
                     basicIndicies = np.append(basicIndicies, len(A[1]) - 1)
                     artificalIndicies = np.append(artificalIndicies, len(A[1]) - 1)
+                    c = np.append(c, M)
+
 
     return c,A,b,basicIndicies.astype(int),artificalIndicies.astype(int)
 
@@ -65,13 +76,13 @@ def changeToStandardForm(c,A,b,signs):
 # print(artificalIndicies)
 
 c = -np.array([1, 4, 7,3])
-A = np.array([[2, 1, 2, 3], [3, -1, -2, 2]])
+A = np.array([[2, 1, 2, 3], [3, 1, -2, 2]])
 b = np.array([10, 5])
 signs = np.array([-1,0]) # 1 is >= , -1 is <= , 0 is =
 
 c,A,b,basicIndicies,artificalIndicies = changeToStandardForm(c,A,b,signs)
 
-
+print(c)
 print(A)
 print(basicIndicies)
 print(artificalIndicies)
