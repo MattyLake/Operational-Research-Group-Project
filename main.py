@@ -46,12 +46,19 @@ if np.any(cB @ Binverse @ A - c) < 0:
     print("Finished")
 else:
     # Find the entering variable
-    enteringIndex = np.argmax(cB @ Binverse @ A - c)
+    enteringIndex = np.argmin(cB @ Binverse @ A - c)
     enteringVariable = nonBasicIndices[enteringIndex]
     print("Entering Variable: ", enteringVariable)
 
     # Find the leaving variable
-    leavingIndex = np.argmin(b / A[:, enteringVariable])
+    ratios = [] # Finding the smallest positive ratio
+    for i in range(len(b)):
+        if B[i, enteringIndex] > 0:
+            ratios.append(b[i] / B[i, enteringIndex])
+        else:
+            ratios.append(np.inf)
+    ratios = np.array(ratios)
+    leavingIndex = np.argmin(ratios)
     leavingVariable = basicIndices[leavingIndex]
     print("Leaving Variable: ", leavingVariable)
 
