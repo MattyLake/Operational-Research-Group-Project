@@ -3,11 +3,16 @@ import numpy as np
 
 def changeToStandardForm(c, A, b, signs):
     #TODO: Fix M when 0 coefficient is in objective function
-    M = 10000000000
-    # for i in range(0, len(A)):
-    #     for j in range(0, len(A[1])):
-    #         M = M * A[i, j]
-    # M = abs(M * 100)
+    M = 1000000
+
+    for j in range(0, len(A[1])):
+        for i in range(0, len(A)):
+            if A[i,j]!=0:
+                M = abs(M * A[i, j])
+        if c[j]!=0:
+            M=abs(M*c[j])
+
+
 
     validInput = True
     for i in range(0, len(b)):
