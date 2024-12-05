@@ -2,70 +2,75 @@ import numpy as np
 from bfs import changeToStandardForm
 from bfs import renderLLP
 
+def revised_simplex(c, A, b, initial_B_idx):
+    m, n = A.shape
+
+    # Initialize indices
+    B_idx = initial_B_idx  # Indices of the basic variables
+    N_idx = [i for i in range(n) if i not in B_idx]  # Indices of non-basic variables
+
+    B = A[:, B_idx]  # Basis matrix
+    N = A[:, N_idx]  # Non-basic columns
+
+    x = np.zeros(n)  # Solution vector
+    x[B_idx] = np.linalg.solve(B, b)  # Initial basic feasible solution
+
+    while True:
+        # Compute reduced costs
+        c_B = c[B_idx]
+        c_N = c[N_idx]
+
+        y = np.linalg.solve(B.T, c_B)
+        reduced_costs = c_N - y @ N
+
+        # Check for optimality
+        if all(reduced_costs <= 0):
+            # Optimal solution found
+            x[B_idx] = np.linalg.solve(B, b)
+            optimal_value = c @ x
+            return x, optimal_value
+            # return optimal solution
+
+        # Determine entering variable
+        entering_idx = np.argmax(reduced_costs)
+        entering_var = N_idx[entering_idx]
+
+        # Determine leaving variable
+        ratios = np.zeros((len(b), 1))
+        for i in range(len(b)):
+            if A[i][entering_idx] > 0:
+                ratios[i] = b[i] / A[i][entering_idx]
+            else:
+                ratios[i] = np.inf
+
+        leaving_idx = np.argmin(ratios)
+        leaving_var = B_idx[leaving_idx]
+
+        # Update basis
+
+        B_idx[leaving_idx] = entering_var
+        N_idx[entering_idx] = leaving_var
+
+        B = A[:, B_idx]
+        N = A[:, N_idx]
+
 # ----------------------- Enter the LLP below this line ----------------------- #
 
-# nature = -1  # 1 is minimization, -1 is maximization
-# c = nature * np.array([6, 1])
-# A = np.array([[-1, 3], [1, -3], [1, 1]])
-# b = np.array([6, 6, 1])
-# signs = np.array([-1,0,1])  # 1 is >= , -1 is <= , 0 is =
-
-nature = -1  # 1 is minimization, -1 is maximization
+nature = 1  # 1 is minimization, -1 is maximization
 c = nature * np.array([7, 6])
 A = np.array([[2, 4], [3, 2]])
 b = np.array([16, 12])
 signs = np.array([-1, -1])  # 1 is >= , -1 is <= , 0 is =
 
 # ----------------------- Enter the LLP above this line ----------------------- #
-def simplexMatrix(nature,c,A,b,signs):
-    renderLLP(c, A, b, signs)
-    print("-----------------------------------------------")
-    print("Converting to standard form...")
-    c, A, b, signs, basicIndices, artificialIndices = changeToStandardForm(c, A, b, signs)
-    renderLLP(c, A, b, signs)
-    print("Basic Indices: ", basicIndices)
-    print("Artificial Indices: ", artificialIndices)
-    print("-----------------------------------------------")
 
-    nonBasicIndices = [i for i in range(len(c)) if i not in basicIndices]
+renderLLP(c, A, b, signs)
+c, A, b, signs, basicIndices, artificialIndices = changeToStandardForm(c, A, b, signs)
+print()
+renderLLP(c, A, b, signs)
 
+x, optimal_value = revised_simplex(c, A, b, basicIndices)
 
-    cB = c[basicIndices]
-
-    # For basic variables z represents unit contribution to the objective function
-    # For non-basic variables z represents the profit to give up if added to the basis
-    z = np.zeros((len(c), 1))
-    netEvaluation = c.reshape(-1, 1) - z
-
-    print("Net Evaluation: ", netEvaluation)
-
-    enteringIndex = np.argmin(netEvaluation)
-    print(enteringIndex)
-
-    ratios = np.zeros((len(b), 1))
-    for i in range(len(b)):
-        if A[i][enteringIndex] > 0:
-            ratios[i] = b[i] / A[i][enteringIndex]
-        else:
-            ratios[i] = np.inf
-
-    print("Ratios: ", ratios)
-    leavingIndex = np.argmin(ratios)
-
-    print("Entering Index: ", enteringIndex)
-    print("Leaving Index: ", basicIndices[leavingIndex])
-
-    basicIndices[leavingIndex] = enteringIndex
-
-    nonBasicIndices = [i for i in range(len(c)) if i not in basicIndices]
-    cB = c[basicIndices]
-
-    print("Basic Indices: ", basicIndices)
-    print("cB: ", cB)
-
-
-
-    print(A)
-
-simplexMatrix(nature,c,A,b,signs)
-
+print()
+print("Optimal solution:", x)
+print("Optimal value:", optimal_value)

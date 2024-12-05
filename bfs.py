@@ -70,13 +70,13 @@ def changeToStandardForm(c, A, b, signs):
 def renderLLP(c, A, b, signs):
     print("minimize ", end="")
     for i in range(len(c)):
-        print(c[i], "x", i, end="")
+        print(c[i], "x_" + str(i), end="")
         if i != len(c) - 1:
             print(" + ", end="")
     print("\nsubject to ")
     for i in range(len(b)):
         for j in range(len(A[i])):
-            print(A[i][j], "x", j, end="")
+            print(A[i][j], "x_" + str(j), end="")
             if j != len(A[i]) - 1:
                 print(" + ", end="")
         if signs[i] == -1:
