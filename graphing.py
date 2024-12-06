@@ -1,22 +1,30 @@
 import numpy as np
-from main import simplexMatrix
+from main import revised_simplex
 import matplotlib.pyplot as plt
+from bfs import changeToStandardForm,renderLLP
 
-nature = -1  # 1 is minimization, -1 is maximization
-c = nature * np.array([7, 6])
-A = np.array([[2, 4], [3, 2]])
-b = np.array([16, 12])
-signs = np.array([-1, -1])  # 1 is >= , -1 is <= , 0 is =
 bArray=[]
 solutionArray=[]
+
+
+
 for i in range (1,25):
+    nature = 1  # 1 is minimization, -1 is maximization
+    c = nature * np.array([7, 6])
+    A = np.array([[2, 4], [3, 2]])
+    signs = np.array([-1, -1])  # 1 is >= , -1 is <= , 0 is =
     b=np.array([i,12])
-    solution=simplexMatrix(nature,c,A,b,signs) #return solution here and append to list (add feasible solutions)
-    if solution != "unfeasible":
-        bArray.append(i)
-        solutionArray.append(solution)
+    c, A, b, signs, basicIndices, artificialIndices = changeToStandardForm(c, A, b, signs)
+    renderLLP(c, A, b, signs)
+
+    solution,solutionVal=revised_simplex(c,A,b,basicIndices) #return solution here and append to list (add feasible solutions)
+    print("sol",solutionVal)
+    bArray.append(i)
+    solutionArray.append(solutionVal)
 
 
+print(bArray)
+print(solutionVal)
 plt.scatter(bArray,solutionArray)
 plt.xlabel('b value')
 plt.ylabel('Solution')
