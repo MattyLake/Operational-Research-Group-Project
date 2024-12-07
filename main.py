@@ -7,8 +7,6 @@ def revisedSimplexMethod(A, b, c, initialBasicIndices):
     B = initialBasicIndices  # Indices of the basic variables#
     N = [i for i in range(len(c)) if i not in B]  # Indices of non-basic variables
 
-
-    print(B)
     # Basis and non-basic matrices
     BMatrix = A[:, B]
     NMatrix = A[:, N]
