@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def changeToStandardForm(c, A, b, signs):
+def convertToCanonicalForm(nature, c, A, b, signs):
     #TODO: Fix M when 0 coefficient is in objective function
     M = 1000000
 
@@ -93,27 +93,3 @@ def renderLLP(nature, c, A, b, signs):
         else:
             print(" =", b[i])
 
-# nature = -1  # 1 is minimization, -1 is maximization
-# c = nature * np.array([1, 4, 7, 5])
-# A = np.array([[2, 1, 2, 4], [3, -1, -2, 6]])
-# b = np.array([10, 5])
-# signs = np.array([-1,0])  # 1 is >= , -1 is <= , 0 is =
-#
-# c,A,b,basicIndicies,artificalIndicies = changeToStandardForm(c,A,b,signs)
-
-
-# print(A)
-# print(basicIndicies)
-# print(artificalIndicies)
-
-# c = -np.array([1, 4, 7,3])
-# A = np.array([[2, 1, 2, 3], [3, 1, -2, 2]])
-# b = np.array([10, 5])
-# signs = np.array([-1,0]) # 1 is >= , -1 is <= , 0 is =
-
-# c,A,b,basicIndicies,artificalIndicies = changeToStandardForm(c,A,b,signs)
-#
-# print(c)
-# print(A)
-# print(basicIndicies)
-# print(artificalIndicies)
