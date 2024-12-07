@@ -1,76 +1,82 @@
 import numpy as np
-from bfs import changeToStandardForm
+from bfs import convertToCanonicalForm
 from bfs import renderLLP
 
-def revised_simplex(c, A, b, initial_B_idx):
-    m, n = A.shape
-
+def revisedSimplexMethod(A, b, c, initialBasicIndices):
     # Initialize indices
-    B_idx = initial_B_idx  # Indices of the basic variables
-    N_idx = [i for i in range(n) if i not in B_idx]  # Indices of non-basic variables
+    B = initialBasicIndices  # Indices of the basic variables#
+    N = [i for i in range(len(c)) if i not in B]  # Indices of non-basic variables
 
-    B = A[:, B_idx]  # Basis matrix
-    N = A[:, N_idx]  # Non-basic columns
 
-    x = np.zeros(n)  # Solution vector
-    x[B_idx] = np.linalg.solve(B, b)  # Initial basic feasible solution
+    print(B)
+    # Basis and non-basic matrices
+    BMatrix = A[:, B]
+    NMatrix = A[:, N]
+
+    # Solution vector
+    x = np.zeros(len(c))
+
+    # Initial basic feasible solution
+    x[B] = np.linalg.solve(BMatrix, b)
 
     while True:
         # Compute reduced costs
-        c_B = c[B_idx]
-        c_N = c[N_idx]
+        cB = c[B]
+        cN = c[N]
 
-        y = np.linalg.solve(B.T, c_B)
-        reduced_costs = c_N - y @ N
+        y = np.linalg.solve(BMatrix.T, cB)
+        reducedCosts = cN - y @ NMatrix
 
         # Check for optimality
-        if all(reduced_costs <= 0):
+        if all(reducedCosts <= 0):
             # Optimal solution found
-            x[B_idx] = np.linalg.solve(B, b)
-            optimal_value = c @ x
-            return x, optimal_value
-            # return optimal solution
+            x[B] = np.linalg.solve(BMatrix, b)
+            optimalValue = c @ x
+            return x, optimalValue
 
         # Determine entering variable
-        entering_idx = np.argmax(reduced_costs)
-        entering_var = N_idx[entering_idx]
+        enteringIndex = np.argmax(reducedCosts)
+        enteringVariable = N[enteringIndex]
 
         # Determine leaving variable
-        ratios = np.zeros((len(b), 1))
+        ratios = np.zeros(len(b))
         for i in range(len(b)):
-            if A[i][entering_idx] > 0:
-                ratios[i] = b[i] / A[i][entering_idx]
+            if A[i, enteringVariable] > 0:
+                ratios[i] = x[B[i]] / A[i, enteringVariable]
             else:
                 ratios[i] = np.inf
 
-        leaving_idx = np.argmin(ratios)
-        leaving_var = B_idx[leaving_idx]
+        leavingIndex = np.argmin(ratios)
+        leavingVariable = B[leavingIndex]
 
         # Update basis
+        B[leavingIndex] = enteringVariable
+        N[enteringIndex] = leavingVariable
 
-        B_idx[leaving_idx] = entering_var
-        N_idx[entering_idx] = leaving_var
+        BMatrix = A[:, B]
+        x[B] = np.linalg.solve(BMatrix, b)
 
-        B = A[:, B_idx]
-        N = A[:, N_idx]
+# ------------------------- Enter LLP Below --------------------------------
 
-# ----------------------- Enter the LLP below this line ----------------------- #
+nature = 1  # 1 is maximization, -1 is minimization
+c = nature * np.array([5, 4])
+A = np.array([[6, 4], [1, 2], [-1, 1], [0, 1]])
+b = np.array([24, 6, 1, 2])
+signs = np.array([-1, -1, -1, -1])  # 1 is >= , -1 is <= , 0 is =
 
-nature = 1  # 1 is minimization, -1 is maximization
-c = nature * np.array([7, 6])
-A = np.array([[2, 4], [3, 2]])
-b = np.array([16, 12])
-signs = np.array([-1, -1])  # 1 is >= , -1 is <= , 0 is =
+# ------------------------- Enter LLP Above --------------------------------
 
-# ----------------------- Enter the LLP above this line ----------------------- #
+print("Original LLP:")
+renderLLP(nature, c, A, b, signs)
 
-renderLLP(c, A, b, signs)
-c, A, b, signs, basicIndices, artificialIndices = changeToStandardForm(c, A, b, signs)
-print()
-renderLLP(c, A, b, signs)
+c, A, b, signs, basicIndices, artificialIndices = convertToCanonicalForm(nature, c, A, b, signs)
 
-x, optimal_value = revised_simplex(c, A, b, basicIndices)
 
 print()
-print("Optimal solution:", x)
-print("Optimal value:", optimal_value)
+print("Canonical form:")
+renderLLP(nature, c, A, b, signs)
+solution, optimalValue = revisedSimplexMethod(A, b, c, basicIndices)
+
+print()
+print("Solution:")
+print("Optimal value:", optimalValue)
