@@ -1,5 +1,5 @@
 import numpy as np
-from main3 import revisedSimplexMethod
+from main import revisedSimplexMethod
 import matplotlib.pyplot as plt
 from bfs import convertToCanonicalForm,renderLLP
 
