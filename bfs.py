@@ -64,11 +64,18 @@ def changeToStandardForm(c, A, b, signs):
                     artificalIndices = np.append(artificalIndices, len(A[1]) - 1)
                     c = np.append(c, M)
 
+    if nature == -1:
+        c = -c
+        nature = 1
+
     return c, A, b, signs, basicIndices.astype(int), artificalIndices.astype(int)
 
 
-def renderLLP(c, A, b, signs):
-    print("minimize ", end="")
+def renderLLP(nature, c, A, b, signs):
+    if nature == 1:
+        print("maximize ", end="")
+    elif nature == -1:
+        print("minimize ", end="")
     for i in range(len(c)):
         print(c[i], "x_" + str(i), end="")
         if i != len(c) - 1:
