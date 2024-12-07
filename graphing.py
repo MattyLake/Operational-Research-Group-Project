@@ -16,10 +16,10 @@ for i in range (1,25):
     A = np.array([[2, 4], [3, 2]])
     signs = np.array([-1, -1])  # 1 is >= , -1 is <= , 0 is =
     b=np.array([i,12])
-    c, A, b, signs, basicIndices = convertToCanonicalForm(c, A, b, signs)
-    renderLLP(c, A, b, signs)
+    c, A, b, signs, basicIndices, artificialIndices = convertToCanonicalForm(nature,c, A, b, signs)
+    renderLLP(nature,c, A, b, signs)
 
-    solution,solutionVal=revisedSimplexMethod(c,A,b,basicIndices)
+    solution,solutionVal=revisedSimplexMethod(A,b,c,basicIndices)
     print("sol",solutionVal)
     bArray.append(i)
     firstSolutionArray.append(solutionVal)
@@ -30,10 +30,10 @@ for i in range (1,25):
     A = np.array([[2, 4], [3, 2]])
     signs = np.array([-1, -1])  # 1 is >= , -1 is <= , 0 is =
     b=np.array([16,i])
-    c, A, b, signs, basicIndices = convertToCanonicalForm(c, A, b, signs)
-    renderLLP(c, A, b, signs)
+    c, A, b, signs, basicIndices, artificialIndices = convertToCanonicalForm(nature,c, A, b, signs)
+    renderLLP(nature,c, A, b, signs)
 
-    solution,solutionVal=revisedSimplexMethod(c,A,b,basicIndices)
+    solution,solutionVal=revisedSimplexMethod(A,b,c,basicIndices)
     print("sol",solutionVal)
     secondSolutionArray.append(solutionVal)
 
