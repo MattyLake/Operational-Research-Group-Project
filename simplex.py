@@ -46,7 +46,7 @@ def revised_simplex(c, A, b, basic_vars):
         # Compute direction vector d_B
         a_enter = N[:, entering_index]
         d_B = np.linalg.solve(B, a_enter)
-
+        print(f"Direction vector d_B: {d_B}")
         # Check for unboundedness
         if all(d_B <= 0):
             return {

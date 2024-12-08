@@ -1,28 +1,47 @@
 import numpy as np
 
-def convertToCanonicalForm( c, A, b, signs):
-    M = 1000
-    for i in range(len(c)):
-        M =M+abs(c[i])
-    signsNew=signs
 
+def convertToCanonicalForm(c, A, b, signs):
+    """
+        Converts the LLP to canonical form.
+
+        Args:
+            c (numpy.ndarray): Coefficients of the objective function.
+            A (numpy.ndarray): Coefficient matrix of the constraints.
+            b (numpy.ndarray): Right-hand side of the constraints.
+            signs (list): List of indices of the basic variables.
+
+        Returns:
+            c (numpy.ndarray): Canonical Coefficients of the objective function.
+            A (numpy.ndarray): Canonical Coefficient matrix of the constraints.
+            b (numpy.ndarray): Canonical Right-hand side of the constraints.
+            signs (list): List of {0} of length of constraints.
+            basicIndices (list): List of indices of the basic variables.
+            artificalIndices (list): List of indices of the artificial variables.
+        """
+    M = 1000  # Big M
+    for i in range(len(c)):
+        M = M + abs(c[i])
+    signsNew = signs
+
+    # Validation of input, if invalid return 0
     validInput = True
     for i in range(0, len(b)):
         if b[i] < 0:
             validInput = False
         if not (signs[i] == 1 or signs[i] == 0 or signs[i] == -1):
             validInput = False
-
     if not (len(A) == len(b) == len(signs)) or validInput == False or not (len(c) == len(A[0])):
         print("\nInvalid Input.     !Check LLP!")
         validInput=False
         return c, A, b, 0, 0, 0,validInput
 
+    # Main conversion of constraints to canonical form
     basicIndices = np.array([])
     artificialIndices = np.array([])
     numConstraints = len(signs)
     for i in range(0, numConstraints):
-        if signs[i] == -1: # <=
+        if signs[i] == -1:  # <=
             newColumn = np.zeros((numConstraints, 1))
             for j in range(0, numConstraints):
                 if j == i:
@@ -31,7 +50,7 @@ def convertToCanonicalForm( c, A, b, signs):
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
                     c = np.append(c, 0)
 
-        elif signs[i] == 1: # >=
+        elif signs[i] == 1:  # >=
             for j in range(0, numConstraints):
                 newColumn = np.zeros((numConstraints, 1))
                 if j == i:
@@ -45,7 +64,7 @@ def convertToCanonicalForm( c, A, b, signs):
                     artificialIndices = np.append(artificialIndices, len(A[1]) - 1)
                     c = np.append(c, M)
 
-        elif signs[i] == 0: # =
+        elif signs[i] == 0:  # =
             newColumn = np.zeros((numConstraints, 1))
             for j in range(0, numConstraints):
                 if j == i:
@@ -54,22 +73,32 @@ def convertToCanonicalForm( c, A, b, signs):
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
                     artificialIndices = np.append(artificialIndices, len(A[1]) - 1)
                     c = np.append(c, M)
-    for i in range(0,len(signsNew)):
-        signsNew[i]=0
+    for i in range(0, len(signsNew)):
+        signsNew[i] = 0
 
-    return c, A, b,signsNew,basicIndices.astype(int),artificialIndices.astype(int),validInput
+    return c, A, b, signsNew, basicIndices.astype(int), artificialIndices.astype(int), validInput
 
 
 def renderLPP(nature, c, A, b, signs):
-    if nature==-1:
+    """
+    Renders the LPP in a human-readable format.
+    :param nature:
+    :param c:
+    :param A:
+    :param b:
+    :param signs:
+    :return:
+    """
+    if nature == -1: # Objective function
         print("maximize ", end="")
-    elif nature==1:
+    elif nature == 1:
         print("minimize ", end="")
     for i in range(len(c)):
         print(c[i], "x_" + str(i), end="")
         if i != len(c) - 1:
             print(" + ", end="")
-    print("\nsubject to ")
+
+    print("\nsubject to ") # Constraints
     for i in range(len(b)):
         for j in range(len(A[i])):
             print(A[i][j], "x_" + str(j), end="")
@@ -81,4 +110,3 @@ def renderLPP(nature, c, A, b, signs):
             print(" >=", b[i])
         else:
             print(" =", b[i])
-

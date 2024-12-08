@@ -17,7 +17,7 @@ tolerance=1e-7
 cCopy=c*nature
 
 
-cNew, ANew, bNew,signsNew, basicIndices, artificialIndices,validInput = convertToCanonicalForm(c, A, b, signs)
+cNew, ANew, bNew,signsNew, basicIndices, artificialIndices, validInput = convertToCanonicalForm(c, A, b, signs)
 #print("c: ", cNew)
 #print("A:\n ", ANew)
 #print("b: ", bNew)
