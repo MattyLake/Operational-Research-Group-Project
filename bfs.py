@@ -4,6 +4,7 @@ def convertToCanonicalForm( c, A, b, signs):
     M = 1000
     for i in range(len(c)):
         M =M+abs(c[i])
+    signsNew=signs
 
     validInput = True
     for i in range(0, len(b)):
@@ -52,14 +53,16 @@ def convertToCanonicalForm( c, A, b, signs):
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
                     artificalIndices = np.append(artificalIndices, len(A[1]) - 1)
                     c = np.append(c, M)
+    for i in range(0,len(signsNew)):
+        signsNew[i]=0
 
-    return c, A, b,basicIndices.astype(int),artificalIndices.astype(int)
+    return c, A, b,signsNew,basicIndices.astype(int),artificalIndices.astype(int)
 
 
 def renderLLP(nature, c, A, b, signs):
-    if nature == 1:
+    if nature==-1:
         print("maximize ", end="")
-    elif nature == -1:
+    elif nature==1:
         print("minimize ", end="")
     for i in range(len(c)):
         print(c[i], "x_" + str(i), end="")
