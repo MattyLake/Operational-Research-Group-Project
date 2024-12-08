@@ -19,7 +19,7 @@ def convertToCanonicalForm( c, A, b, signs):
         return c, A, b, 0, 0, 0,validInput
 
     basicIndices = np.array([])
-    artificalIndices = np.array([])
+    artificialIndices = np.array([])
     numConstraints = len(signs)
     for i in range(0, numConstraints):
         if signs[i] == -1: # <=
@@ -42,7 +42,7 @@ def convertToCanonicalForm( c, A, b, signs):
                     newColumn[j, 0] = 1
                     A = np.append(A, newColumn, axis=1)
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
-                    artificalIndices = np.append(artificalIndices, len(A[1]) - 1)
+                    artificialIndices = np.append(artificialIndices, len(A[1]) - 1)
                     c = np.append(c, M)
 
         elif signs[i] == 0: # =
@@ -52,12 +52,12 @@ def convertToCanonicalForm( c, A, b, signs):
                     newColumn[j, 0] = 1
                     A = np.append(A, newColumn, axis=1)
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
-                    artificalIndices = np.append(artificalIndices, len(A[1]) - 1)
+                    artificialIndices = np.append(artificialIndices, len(A[1]) - 1)
                     c = np.append(c, M)
     for i in range(0,len(signsNew)):
         signsNew[i]=0
 
-    return c, A, b,signsNew,basicIndices.astype(int),artificalIndices.astype(int),validInput
+    return c, A, b,signsNew,basicIndices.astype(int),artificialIndices.astype(int),validInput
 
 
 def renderLPP(nature, c, A, b, signs):
