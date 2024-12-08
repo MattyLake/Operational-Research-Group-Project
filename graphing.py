@@ -1,47 +1,40 @@
 import numpy as np
-from main import revisedSimplexMethod
+from simplex import revised_simplex
 import matplotlib.pyplot as plt
-from bfs import convertToCanonicalForm,renderLLP
+from bfs import convertToCanonicalForm
+
+
+colours = ['black', 'g', 'b','r','c','m','y']
 
 bArray=[]
-firstSolutionArray=[]
-secondSolutionArray=[]
-thirdSolutionArray=[]
+solutionArray=[]
+nature = 1                                             # CW Example // Solution should be 200# CW Example // Solution should be 200
+c = nature * np.array([7, 0, 11, -10, -1, 26])
+A = np.array([[1, -1, 1, 0, 1, 1], [0, 1, -1, 1, 0, 3], [1, 1, -3, 1, 1, 0], [1, 1, 0, 0, 0, 1]])
+b = np.array([76, 18, 12, 50])
+signs = np.array([0, -1, -1, 1])  # 1 is >= , -1 is <= , 0 is =
+tempArray=[]
+
+for j in range(0,len(b)):
+    for i in range (1,50):
+        b = np.array([76, 18, 12, 50])
+        b[j]=i
+        cNew, ANew, bNew,signsNew, basicIndicesNew, artificialIndices,validInput = convertToCanonicalForm(c, A, b, signs)
+
+        solution = revised_simplex(cNew, ANew, bNew, basicIndicesNew)
+        bArray.append(i)
+        solutionArray.append(solution['optimal_value'])
+
+    plt.scatter(bArray, solutionArray, label='Constraint: '+str(j+1), s=2, marker='o',color=colours[1])
 
 
 
-for i in range (1,25):
-    nature = 1  # 1 is minimization, -1 is maximization
-    c = nature * np.array([7, 6])
-    A = np.array([[2, 4], [3, 2]])
-    signs = np.array([-1, -1])  # 1 is >= , -1 is <= , 0 is =
-    b=np.array([i,12])
-    c, A, b, signs, basicIndices, artificialIndices = convertToCanonicalForm(nature,c, A, b, signs)
-    renderLLP(nature,c, A, b, signs)
-
-    solution,solutionVal=revisedSimplexMethod(A,b,c,basicIndices)
-    print("sol",solutionVal)
-    bArray.append(i)
-    firstSolutionArray.append(solutionVal)
-
-for i in range (1,25):
-    nature = 1  # 1 is minimization, -1 is maximization
-    c = nature * np.array([7, 6])
-    A = np.array([[2, 4], [3, 2]])
-    signs = np.array([-1, -1])  # 1 is >= , -1 is <= , 0 is =
-    b=np.array([16,i])
-    c, A, b, signs, basicIndices, artificialIndices = convertToCanonicalForm(nature,c, A, b, signs)
-    renderLLP(nature,c, A, b, signs)
-
-    solution,solutionVal=revisedSimplexMethod(A,b,c,basicIndices)
-    print("sol",solutionVal)
-    secondSolutionArray.append(solutionVal)
-
-
-plt.scatter(bArray,firstSolutionArray,color='blue',label='First b value',s=20,marker='x')
-plt.scatter(bArray,secondSolutionArray,color='red',label='Second b value',s=20,marker='x')
 plt.xlabel('b Value')
-plt.ylabel('Solution')
-plt.legend()
-plt.title("Solutions varying b value in constraints")
+plt.ylabel('Value in Solution')
+lgnd=plt.legend(fontsize=10,loc='upper left',fancybox=True,shadow=True,bbox_to_anchor=(1,0.5),)
+#for i in range(0,len(c)):
+    #lgnd.legend_handles[i]._sizes=[30]
+plt.title("Values of variables in solution varying b value in constraint: ")
+plt.tight_layout()
 plt.show()
+
