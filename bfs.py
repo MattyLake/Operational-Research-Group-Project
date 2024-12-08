@@ -14,8 +14,9 @@ def convertToCanonicalForm( c, A, b, signs):
             validInput = False
 
     if not (len(A) == len(b) == len(signs)) or validInput == False or not (len(c) == len(A[0])):
-        print("Invalid Input.")
-        return c, A, b, 0, 0, 0
+        print("\nInvalid Input.     !Check LLP!")
+        validInput=False
+        return c, A, b, 0, 0, 0,validInput
 
     basicIndices = np.array([])
     artificalIndices = np.array([])
@@ -56,10 +57,10 @@ def convertToCanonicalForm( c, A, b, signs):
     for i in range(0,len(signsNew)):
         signsNew[i]=0
 
-    return c, A, b,signsNew,basicIndices.astype(int),artificalIndices.astype(int)
+    return c, A, b,signsNew,basicIndices.astype(int),artificalIndices.astype(int),validInput
 
 
-def renderLLP(nature, c, A, b, signs):
+def renderLPP(nature, c, A, b, signs):
     if nature==-1:
         print("maximize ", end="")
     elif nature==1:
