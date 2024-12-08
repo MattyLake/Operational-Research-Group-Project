@@ -1,24 +1,9 @@
 import numpy as np
 
-def addArtificialCoefficients(A, c, M, artificalIndices):
+def convertToCanonicalForm( c, A, b, signs):
+    M = 1000
     for i in range(len(c)):
-        if i in artificalIndices:
-            c[i] = M
-
-    # sumColumns = np.zeros(len(c))
-    # for i in range(len(c)):
-    #     for j in range(len(artificalIndices)):
-    #         sumColumns[i] += M * A[j, i]
-
-    # c = c + sumColumns
-    return c
-
-def convertToCanonicalForm(nature, c, A, b, signs):
-    M = 0
-    for i in range(len(c)):
-        M += abs(c[i])
-    M *= 100
-    M *= nature
+        M =M+abs(c[i])
 
     validInput = True
     for i in range(0, len(b)):
@@ -43,7 +28,6 @@ def convertToCanonicalForm(nature, c, A, b, signs):
                     A = np.append(A, newColumn, axis=1)
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
                     c = np.append(c, 0)
-            signs[i] = 0
 
         elif signs[i] == 1: # >=
             for j in range(0, numConstraints):
@@ -57,8 +41,7 @@ def convertToCanonicalForm(nature, c, A, b, signs):
                     A = np.append(A, newColumn, axis=1)
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
                     artificalIndices = np.append(artificalIndices, len(A[1]) - 1)
-                    c = np.append(c, 0)
-            signs[i] = 0
+                    c = np.append(c, M)
 
         elif signs[i] == 0: # =
             newColumn = np.zeros((numConstraints, 1))
@@ -70,14 +53,7 @@ def convertToCanonicalForm(nature, c, A, b, signs):
                     artificalIndices = np.append(artificalIndices, len(A[1]) - 1)
                     c = np.append(c, M)
 
-    if nature == -1:
-        c = -c
-        nature = 1
-
-    if len(artificalIndices) > 0:
-        c = addArtificialCoefficients(A, c, M, artificalIndices.astype(int))
-
-    return nature, c, A, b, signs, basicIndices.astype(int)
+    return c, A, b,basicIndices.astype(int),artificalIndices.astype(int)
 
 
 def renderLLP(nature, c, A, b, signs):
