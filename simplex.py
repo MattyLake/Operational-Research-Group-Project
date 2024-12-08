@@ -1,6 +1,6 @@
 import numpy as np
 
-def revised_simplex(c, A, b, basic_vars):
+def revisedSimplexMethod(c, A, b, basic_vars):
 
     m, n = A.shape
     non_basic_vars = [i for i in range(n) if i not in basic_vars]

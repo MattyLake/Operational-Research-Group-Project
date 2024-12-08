@@ -1,5 +1,5 @@
 import numpy as np
-from simplex import revised_simplex
+from simplex import revisedSimplexMethod
 import matplotlib.pyplot as plt
 from bfs import convertToCanonicalForm
 
@@ -20,7 +20,7 @@ for i in range (1,200):
     b[bVaryNum-1]=i
     cNew, ANew, bNew,signsNew, basicIndicesNew, artificialIndices,validInput = convertToCanonicalForm(c, A, b, signs)
 
-    solution = revised_simplex(cNew, ANew, bNew, basicIndicesNew)
+    solution = revisedSimplexMethod(cNew, ANew, bNew, basicIndicesNew)
     bArray.append(i)
     solutionArray.append(solution['x'])
 

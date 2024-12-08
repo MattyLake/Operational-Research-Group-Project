@@ -9,7 +9,7 @@ def convertToCanonicalForm(c, A, b, signs):
             c (numpy.ndarray): Coefficients of the objective function.
             A (numpy.ndarray): Coefficient matrix of the constraints.
             b (numpy.ndarray): Right-hand side of the constraints.
-            signs (list): List of indices of the basic variables.
+            signs (numpy.ndarray): List of indices of the basic variables.
 
         Returns:
             c (numpy.ndarray): Canonical Coefficients of the objective function.
