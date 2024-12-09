@@ -77,7 +77,7 @@ Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$, subject to
     x_1 + x_2 + x_6 - S_3&= 50 \label{lpp2:constraint4}
 \end{align}
 with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6, S_1, S_2, S_3\geq 0$.\\ \\
-However (\ref{lpp2:constraint4}) violates the non-negativity constraint, so to fix that we need to introduce artificial variables to the LLP. In order to make a basic feasible solution we need to add artificial variables to both (\ref{lpp2:constraint1}) and (\ref{lpp2:constraint4}). We will also amend the objective function with a large M value. This will be used in calculations so the artificial variables tend to 0 iterations progress. So the problem becomes: \\ \\
+However (\ref{lpp2:constraint4}) violates the non-negativity constraint, so to fix that we need to introduce artificial variables to the LPP. In order to make a basic feasible solution we need to add artificial variables to both (\ref{lpp2:constraint1}) and (\ref{lpp2:constraint4}). We will also amend the objective function with a large M value. This will be used in calculations so the artificial variables tend to 0 as iterations progress. So now the problem becomes: \\ \\
 Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6 + M(R_1 + R_2)$, subject to
 \begin{align}
     x_1 - x_2 + x_3 + x_5 + x_6 + R_1&= 76 \\
@@ -87,7 +87,7 @@ Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6 + M(R_1 + R_2)$, subject to
 \end{align}
 with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6, S_1, S_2, S_3, R_1, R_2\geq 0$.\\
 \newpage
-The LLP is now in canonical form and is ready for simplex.
+The LPP is now in canonical form and is ready for simplex.
 
 \subsection{Revised Simplex Algorithm}
 The Revised Simplex Algorithm is a variant of the Simplex Algorithm that is used to solve linear programming problems. It uses inverse matrices to simplifiy the calculations for computers. \\
@@ -125,9 +125,9 @@ There are three possibilities for the optimality test:
 \end{itemize}
 We choose the most negative value as the entering variable. This is the variable that will enter the basis.
 \subsubsection{Feasibility Test}
-As we have found an entering variable, we find the associated column of N and call it $a_E$. We then find the ratio of the right hand side to the column. If all values are negative, then the problem is unbounded. If there is a positive value, then we choose the smallest value as the leaving variable. This is the variable that will leave the basis.
+As we have found an entering variable, we find the associated column of N and call it $a_E$. We then find the ratios of the right hand side to the column of the entering variable. If all values are negative, then the problem is unbounded. If there is a positive value, then we choose the smallest value as the corrensponding leaving variable. This is the variable that will leave the basis.
 
-Finally, we update the entering column of N, remove the leaving column from B and update the coefficients of the objective function. We then repeat until we reach the optimal solution.
+Finally, we update the basis with the entering column from N, remove the leaving column from B and update the coefficients of the objective function. We then repeat until we reach the optimal solution.
 
 \newpage
 \section{Implementation}
@@ -141,13 +141,14 @@ Before doing any simplex calculations on the question, we had to parse the quest
     \item c: This is a vector that represents the coefficients of the objective function. Each column represents a variable.
     \item Signs: This is a vector that represents the signs of the constraints. Each row represents a constraint. The value -1 represents a less than or equal to constraint, 0 represents an equal to constraint, and 1 represents a greater than or equal to constraint.
 \end{itemize}
+As we have code to convert the LPP to canonical form, we can accept any LPP in any form.
 \newpage
 \subsection{Main Method}
 The main method is the entry point for the program. It is where the question is inputted and the functions are called. When using this project, this is the only method that needs to be interacted with.
 \subsection{convertToCanonicalForm}
 Documentation for convertToCanonicalForm is as follows:
 \begin{lstlisting}
-    Converts the LLP to canonical form.
+    Converts the LPP to canonical form.
 
         Args:
             c (numpy.ndarray): Coefficients of the objective function.
@@ -183,7 +184,7 @@ Documentation for revisedSimplexMethod is as follows:
 
 \newpage
 \section{Verification}
-For verification, we used the given question: \\ \\
+For verification, we entered the question: \\
 Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$, subject to
 \begin{align}
     x_1 - x_2 + x_3 + x_5 + x_6 &= 76 \label{ver1:constraint1} \\
@@ -191,7 +192,7 @@ Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$, subject to
     x_1 + x_2 - 3x_3 + x_4 + x_5 &\leq 12 \label{ver1:constraint3} \\
     x_1 + x_2 + x_6 &\geq 50 \label{ver1:constraint4}
 \end{align}
-with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6 \geq 0$. \\ 
+with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6 \geq 0$. \\
 We then used the Python package SciPy to solve the question. The representation of the question in SciPy is as follows:
 \begin{lstlisting}[language=Python, basicstyle=\scriptsize, frame=single]
     import numpy as np
@@ -238,21 +239,15 @@ We then used the SciPy method linprog to solve the question. The results were as
     mip_dual_bound: 0.0
     mip_gap: 0.0
 \end{lstlisting}
-The solution of the question corresponds with the "fun" value in the dictionary output. The value of the objective function is 200.0, which matches the value we found using the Revised Simplex Method. This verifies that our implementation is correct.
+The solution of the question corresponds with the "fun" value in the dictionary output. The value of the objective function is 200.0, which matches the value we found using the Revised Simplex Method. It also shows it took 5 iterations in the "nit" value which also aligns itself with our calculations. This verifies that our implementation is correct for this question.
 
 \newpage
 \section{Sensitivity Analysis}
-Performing a sensitivity analysis inspects how the optimal solution to a LPP responds to changes in its parameters. The analysis will help to assess the robustness of the optimal solution found using the Revised Simplex Method. For this, sensitivity analysis was performed on the Right-Hand Side (RHS) of constraints and how it affects the optimum value and the feasibility of a solution.  
-\\ \\
-Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$ subject to
-\begin{align}
-    x_1 - x_2 + x_3 + x_5 + x_6 &= 76 \\
-    x_2 - x_3 + x_4 + 3x_6 &\leq 18 \\
-    x_1 + x_2 - 3x_3 + x_4 + x_5 &\leq 12 \\
-    x_1 + x_2 + x_6 &\geq 50
-\end{align}
-with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6 \geq 0$.
-
+\subsection{Behaviour of the Objective Function}
+\subsection{Constraint 1}
+\subsection{Constraint 2}
+\subsection{Constraint 3}
+\subsection{Constraint 4}
 \newpage
 \section{Conclusion}
 

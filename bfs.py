@@ -3,7 +3,7 @@ import numpy as np
 
 def convertToCanonicalForm(c, A, b, signs):
     """
-        Converts the LLP to canonical form.
+        Converts the LPP to canonical form.
 
         Args:
             c (numpy.ndarray): Coefficients of the objective function.
@@ -32,7 +32,7 @@ def convertToCanonicalForm(c, A, b, signs):
         if not (signs[i] == 1 or signs[i] == 0 or signs[i] == -1):
             validInput = False
     if not (len(A) == len(b) == len(signs)) or validInput == False or not (len(c) == len(A[0])):
-        print("\nInvalid Input.     !Check LLP!")
+        print("\nInvalid Input.     !Check LPP!")
         validInput=False
         return c, A, b, 0, 0, 0,validInput
 
