@@ -14,20 +14,32 @@ A = np.array([[1, -1, 1, 0, 1, 1], [0, 1, -1, 1, 0, 3], [1, 1, -3, 1, 1, 0], [1,
 b = np.array([76, 18, 12, 50])
 signs = np.array([0, -1, -1, 1])  # 1 is >= , -1 is <= , 0 is =
 tempArray=[]
-bVaryNum=4 # pick constraint number to vary b in starting from 1,2,3 etc
+bVaryNum=3 # pick constraint number to vary b in starting from 1,2,3 etc
 
 for i in range (1,200):
+    feasible=True
     b[bVaryNum-1]=i
     cNew, ANew, bNew,signsNew, basicIndicesNew, artificialIndices,validInput = convertToCanonicalForm(c, A, b, signs)
 
     solution = revisedSimplexMethod(cNew, ANew, bNew, basicIndicesNew)
-    bArray.append(i)
-    solutionArray.append(solution['x'])
+    if solution['status'] == "Unbounded solution":
+        print("Unbounded solution")
+
+    else:
+        if len(artificialIndices) > 0:
+            for m in range(0, len(artificialIndices)):
+                if solution['x'][
+                    artificialIndices[m]] != 0:  # Feasibility check ( Artificial variabled should =0 in equation)
+                    feasible = False
+        if feasible == True:
+            bArray.append(i)
+            solutionArray.append(solution['x'])
 
 for i in range(0,len(c)):
     tempArray=[]
     for j in range(0,len(solutionArray)):
         tempArray.append(solutionArray[j][i])
+
     plt.scatter(bArray, tempArray, label='x_'+str(i+1), s=2, marker='o',color=colours[i])
 
 

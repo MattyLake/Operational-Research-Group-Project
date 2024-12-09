@@ -18,16 +18,25 @@ tempArray=[]
 for j in range(0,len(b)):
     solutionArray=[]
     bArray=[]
-    for i in range (1,100):
+    for i in range (1,200):
+        feasible=True
         b = np.array([76, 18, 12, 50])
         b[j]=i
         cNew, ANew, bNew,signsNew, basicIndicesNew, artificialIndices,validInput = convertToCanonicalForm(c, A, b, signs)
 
         solution = revisedSimplexMethod(cNew, ANew, bNew, basicIndicesNew)
-        bArray.append(i)
-        solutionArray.append(solution['optimal_value'])
-    for i in range(0,len(solutionArray)):
-        print(solutionArray[i])
+        if solution['status'] == "Unbounded solution":
+            print("Unbounded solution")
+
+        else:
+            if len(artificialIndices) > 0:
+                for m in range(0, len(artificialIndices)):
+                    if solution['x'][artificialIndices[m]] != 0:  # Feasibility check ( Artificial variabled should =0 in equation)
+                        feasible = False
+            if feasible == True:
+                bArray.append(i)
+                solutionArray.append(solution['optimal_value'])
+
 
 
     plt.scatter(bArray, solutionArray, label='Constraint: '+str(j+1), s=2, marker='o',color=colours[j])
@@ -42,4 +51,3 @@ lgnd=plt.legend(fontsize=10,loc='upper left',fancybox=True,shadow=True,bbox_to_a
 plt.title("Solution varying b value in each constraint ")
 plt.tight_layout()
 plt.show()
-
