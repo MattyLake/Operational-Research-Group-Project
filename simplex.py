@@ -59,7 +59,7 @@ def revisedSimplexMethod(c, A, b, basic_vars):
         a_enter = N[:, entering_index]
         d_B = np.linalg.solve(B, a_enter)
         print(f"Direction vector d_B: {d_B}")
-        # Check for unboundedness
+        # Check for unbounded solution
         if all(d_B <= 0):
             return {
                 "status": "Unbounded solution"

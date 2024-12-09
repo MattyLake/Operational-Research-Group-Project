@@ -10,6 +10,7 @@ A = np.array([[1, -1, 1, 0, 1, 1], [0, 1, -1, 1, 0, 3], [1, 1, -3, 1, 1, 0], [1,
 b = np.array([76, 18, 12, 50])
 signs = np.array([0, -1, -1, 1])  # 1 is >= , -1 is <= , 0 is =
 
+
 # ------------------------- Enter LPP Above Line --------------------------------
 
 tolerance = 1e-7
@@ -25,6 +26,7 @@ if validInput:
 
     ans = revisedSimplexMethod(cNew, ANew, bNew, basicIndices)
     if ans['status'] == "Unbounded solution":
+        print("\n\n-------------------------------------------------\n")
         print("Unbounded solution")
     else:
         if len(artificialIndices)>0:
