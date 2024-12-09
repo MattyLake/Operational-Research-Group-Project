@@ -16,7 +16,9 @@ signs = np.array([0, -1, -1, 1])  # 1 is >= , -1 is <= , 0 is =
 tempArray=[]
 
 for j in range(0,len(b)):
-    for i in range (1,50):
+    solutionArray=[]
+    bArray=[]
+    for i in range (1,100):
         b = np.array([76, 18, 12, 50])
         b[j]=i
         cNew, ANew, bNew,signsNew, basicIndicesNew, artificialIndices,validInput = convertToCanonicalForm(c, A, b, signs)
@@ -24,17 +26,20 @@ for j in range(0,len(b)):
         solution = revisedSimplexMethod(cNew, ANew, bNew, basicIndicesNew)
         bArray.append(i)
         solutionArray.append(solution['optimal_value'])
+    for i in range(0,len(solutionArray)):
+        print(solutionArray[i])
 
-    plt.scatter(bArray, solutionArray, label='Constraint: '+str(j+1), s=2, marker='o',color=colours[1])
+
+    plt.scatter(bArray, solutionArray, label='Constraint: '+str(j+1), s=2, marker='o',color=colours[j])
 
 
 
 plt.xlabel('b Value')
-plt.ylabel('Value in Solution')
+plt.ylabel('Solution')
 lgnd=plt.legend(fontsize=10,loc='upper left',fancybox=True,shadow=True,bbox_to_anchor=(1,0.5),)
 #for i in range(0,len(c)):
     #lgnd.legend_handles[i]._sizes=[30]
-plt.title("Values of variables in solution varying b value in constraint: ")
+plt.title("Solution varying b value in each constraint ")
 plt.tight_layout()
 plt.show()
 
