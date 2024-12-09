@@ -8,7 +8,7 @@ colours = ['black', 'g', 'b','r','c','m','y']
 
 bArray=[]
 solutionArray=[]
-nature = 1                                             # CW Example // Solution should be 200# CW Example // Solution should be 200
+nature = 1                                             # CW Example // Solution should be 200
 c = nature * np.array([7, 0, 11, -10, -1, 26])
 A = np.array([[1, -1, 1, 0, 1, 1], [0, 1, -1, 1, 0, 3], [1, 1, -3, 1, 1, 0], [1, 1, 0, 0, 0, 1]])
 b = np.array([76, 18, 12, 50])
@@ -29,7 +29,7 @@ for i in range (1,200):
         if len(artificialIndices) > 0:
             for m in range(0, len(artificialIndices)):
                 if solution['x'][
-                    artificialIndices[m]] != 0:  # Feasibility check ( Artificial variabled should =0 in equation)
+                    artificialIndices[m]] != 0:  # Feasibility check ( Artificial variables should =0 in equation)
                     feasible = False
         if feasible == True:
             bArray.append(i)

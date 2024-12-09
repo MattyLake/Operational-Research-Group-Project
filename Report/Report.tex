@@ -8,6 +8,7 @@
 \usepackage{color}
 \usepackage{chngcntr}
 \usepackage{titling}
+\usepackage{pdfpages}
 
 \numberwithin{equation}{section}
 
@@ -46,9 +47,6 @@
 \tableofcontents
 \newpage
 
-\section{Worked Example}
-
-\newpage
 \section{Algorithm Explanation}
 The question we recieved to solve isn't able to be solved using the Simplex Method as it is. The Simplex Method is used to solve linear programming problems in the canonical form. So the first step is to clean the question for the Simplex method.
 \subsection{Converting to Canonical Form}
@@ -130,6 +128,12 @@ As we have found an entering variable, we find the associated column of N and ca
 Finally, we update the basis with the entering column from N, remove the leaving column from B and update the coefficients of the objective function. We then repeat until we reach the optimal solution.
 
 \newpage
+\section{Worked Example}
+On paper, we solved a slightly simpler version of the question we were given. We did this to verify the Simplex Method. The solution is below: \\ \\
+\includegraphics[width=\textwidth]{Media/Cut 1.png}
+\includegraphics[width=\textwidth]{Media/Cut 2.png}
+\includegraphics[width=\textwidth]{Media/Cut 3.png}
+\newpage
 \section{Implementation}
 For this project, we used Python for access to the NumPy module and MatPlotLib for graphing. The code was written in a modular fashion, with each function performing a specific task.
 \subsection{Representation of the Problem}
@@ -141,46 +145,49 @@ Before doing any simplex calculations on the question, we had to parse the quest
     \item c: This is a vector that represents the coefficients of the objective function. Each column represents a variable.
     \item Signs: This is a vector that represents the signs of the constraints. Each row represents a constraint. The value -1 represents a less than or equal to constraint, 0 represents an equal to constraint, and 1 represents a greater than or equal to constraint.
 \end{itemize}
-As we have code to convert the LPP to canonical form, we can accept any LPP in any form.
-\newpage
+As we have code to convert the LPP (Linear Programming Problem) to canonical form, we can accept any LPP in any form.
 \subsection{Main Method}
 The main method is the entry point for the program. It is where the question is inputted and the functions are called. When using this project, this is the only method that needs to be interacted with.
 \subsection{convertToCanonicalForm}
-Documentation for convertToCanonicalForm is as follows:
-\begin{lstlisting}
-    Converts the LPP to canonical form.
+The function convertToCanonicalForm in file bfs.py is used to convert the LPP to canonical form. The function takes the LPP in our parsing style as input and returns the LPP in canonical form. It also introduces artificial variables to the LPP to make a basic feasible solution along with amending the objective function with a large M value if required.\\
+The function requires a valid LPP to work. We added a check to see if the LPP is valid before running the function.\\
+It takes each constraint and does 1 of 3 things:
+\begin{itemize}
+    \item If the constraint is an equality constraint, it adds an artificial variable to the constraint.
+    \item If the constraint is a less than or equal to constraint, it adds a slack variable to the constraint.
+    \item If the constraint is a greater than or equal to constraint, it adds a surplus and an artificial variable to the constraint.
+\end{itemize}
 
-        Args:
-            c (numpy.ndarray): Coefficients of the objective function.
-            A (numpy.ndarray): Coefficient matrix of the constraints.
-            b (numpy.ndarray): Right-hand side of the constraints.
-            signs (numpy.ndarray): List of indices of the basic variables.
+\subsection{Simplex Method}
+The function revisedSimplexMethod in file simplex.py is used to solve the LPP in canonical form. The function takes the LPP in canonical form as input and returns the optimal solution.\\ 
+The function uses the exact same algorithm as described in the Algorithm Explanation section. It uses the optimality test to determine if the current solution is optimal. If it is not, it uses the feasibility test to find the entering and leaving variables. It then updates the basis and repeats until the solution is optimal.\\
+It also checks for infeasibility and unboundedness. If the LPP is infeasible, it returns "Solution is Infeasible". If the LPP is unbounded, it returns "Unbounded solution".
 
-        Returns:
-            c (numpy.ndarray): Canonical Coefficients of the objective function.
-            A (numpy.ndarray): Canonical Coefficient matrix of the constraints.
-            b (numpy.ndarray): Canonical Right-hand side of the constraints.
-            signs (list): List of {0} of length of constraints.
-            basicIndices (list): List of indices of the basic variables.
-            artificalIndices (list): List of indices of the artificial variables.
+\subsection{Parsing the LPP}
+The function renderLPP in file render.py is used to render the LPP. It supports LPP, both canonical and non-canonical form. The function takes the LPP in our parsing style as input and returns a string representation of the LPP.
+\subsection{Graphing}
+The function graph in file variableGraphing.py is used to graph the variables. To change which constraint is being varied, you need to change the variable "bVaryNum". Then the function will make a graph of all feasible solutions which exist in the interval [1, 200].\\
+If the interval of feasible solutions is smaller than 200, the interval will be reduced to the size of the feasible interval.
+\subsection{Using the Code}
+To use the code to answer the provided question, you must verify that variables in main.py are set correctly. The variables are as follows:
+\begin{lstlisting}[language=Python, basicstyle=\scriptsize, frame=single]
+    nature = 1
+    c = nature * np.array([7, 0, 11, -10, -1, 26])
+    A = np.array([[1, -1, 1, 0, 1, 1], [0, 1, -1, 1, 0, 3], [1, 1, -3, 1, 1, 0], [1, 1, 0, 0, 0, 1]])
+    b = np.array([76, 18, 12, 50])
+    signs = np.array([0, -1, -1, 1])
 \end{lstlisting}
-\subsection{revisedSimplexMethod}
-Documentation for revisedSimplexMethod is as follows:
+Once you run main.py, you should see the multiple iterations with each entering and leaving variable and at the end the optimal solution. If the solution is infeasible or unbounded, it will print that instead:
 \begin{lstlisting}
-    Performs the revised simplex method to solve a linear programming problem.
-
-        Args:
-            c (numpy.ndarray): Coefficients of the objective function.
-            A (numpy.ndarray): Coefficient matrix of the constraints.
-            b (numpy.ndarray): Right-hand side of the constraints.
-            basic_vars (list): List of indices of the basic variables.
-
-        Returns:
-            dict: A dictionary containing the optimal value, the optimal solution, and the status of the solution.
+    ---------------------------------------------------------------------------
+    Optimal Value:  200
+    Optimal Solution:  [49.2  0.8 27.6 44.8  0.   0.   0.   0.   0.   0.   0. ]
+    Status:  Optimal solution found
+    ---------------------------------------------------------------------------
 \end{lstlisting}
-\subsection{renderLPP}
 
-\subsection{graphing}
+\newpage
+\section{Special Cases}
 
 \newpage
 \section{Verification}

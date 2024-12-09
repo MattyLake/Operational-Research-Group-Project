@@ -31,10 +31,11 @@ if validInput:
     else:
         if len(artificialIndices)>0:
             for i in range(0,len(artificialIndices)):
-                if ans['x'][artificialIndices[i]]!=0 : #Feasibility check ( Artificial variabled should =0 in equation)
+                if ans['x'][artificialIndices[i]]!=0 : #Feasibility check ( Artificial variables should =0 in equation)
                     feasible=False
                     print("\n\n-------------------------------------------------\n")
                     print("Solution is Infeasible.")
+                    print("\n-------------------------------------------------")
         if feasible==True:
             errorCheck = round(ans['optimal_value'])
             if abs(abs(errorCheck) - abs(ans['optimal_value']))<tolerance:
