@@ -1,4 +1,12 @@
 .idea
+Report/Report.aux
+Report/Report.fdb_latexmk
+Report/Report.fls
+Report/Report.log
+Report/Report.out
+Report/Report.synctex.gz
+Report/Report.toc
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,0 +1,259 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{a4wide}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{chngcntr}
+\usepackage{titling}
+
+\numberwithin{equation}{section}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+    backgroundcolor=\color{white},   % choose the background color
+    basicstyle=\footnotesize,        % size of fonts used for the code
+    breaklines=true,                 % automatic line breaking only at whitespace
+    captionpos=b,                    % sets the caption-position to bottom
+    commentstyle=\color{mygreen},    % comment style
+    escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+    keywordstyle=\color{blue},       % keyword style
+    stringstyle=\color{mymauve},     % string literal style
+}
+
+\title{24MAC175 Group 1 Coursework Report}
+\author{Matthew Lakin, James Death, Nathan Moore, Saad Tahir}
+\date{November - December 2024}
+\pretitle{\begin{center}\Huge}
+\posttitle{\end{center}\vskip 0.5em}
+
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\section{Worked Example}
+
+\newpage
+\section{Algorithm Explanation}
+The question we recieved to solve isn't able to be solved using the Simplex Method as it is. The Simplex Method is used to solve linear programming problems in the canonical form. So the first step is to clean the question for the Simplex method.
+\subsection{Converting to Canonical Form}
+The question we were asked to solve was as follows: \\ \\
+Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$, subject to
+\begin{align}
+    x_1 - x_2 + x_3 + x_5 + x_6 &= 76  \label{lpp1:constraint1} \\
+    x_2 - x_3 + x_4 + 3x_6 &\leq 18 \label{lpp1:constraint2} \\
+    x_1 + x_2 - 3x_3 + x_4 + x_5 &\leq 12 \label{lpp1:constraint3} \\
+    x_1 + x_2 + x_6 &\geq 50 \label{lpp1:constraint4}
+\end{align}
+with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6 \geq 0$. \\ 
+
+The first step in solving this is to put it into canonical form. Canonical form is where the question is in the form:
+\begin{align}
+    \text{Minimise }z &= \underline{c}^T \cdot \underline{x} \\
+    A\underline{x} &= \underline{b} \\
+    \underline{x} &\geq 0
+\end{align}
+For this, we add slack and surplus variables to (\ref{lpp1:constraint1}), (\ref{lpp1:constraint2}), and (\ref{lpp1:constraint3}) to remove the inequality in favour of an equality: \\ \\
+Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$, subject to
+\begin{align}
+    x_1 - x_2 + x_3 + x_5 + x_6 &= 76 \label{lpp2:constraint1} \\
+    x_2 - x_3 + x_4 + 3x_6 + S_1 &= 18 \label{lpp2:constraint2} \\
+    x_1 + x_2 - 3x_3 + x_4 + x_5 + S_2 &= 12 \label{lpp2:constraint3} \\
+    x_1 + x_2 + x_6 - S_3&= 50 \label{lpp2:constraint4}
+\end{align}
+with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6, S_1, S_2, S_3\geq 0$.\\ \\
+However (\ref{lpp2:constraint4}) violates the non-negativity constraint, so to fix that we need to introduce artificial variables to the LLP. In order to make a basic feasible solution we need to add artificial variables to both (\ref{lpp2:constraint1}) and (\ref{lpp2:constraint4}). We will also amend the objective function with a large M value. This will be used in calculations so the artificial variables tend to 0 iterations progress. So the problem becomes: \\ \\
+Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6 + M(R_1 + R_2)$, subject to
+\begin{align}
+    x_1 - x_2 + x_3 + x_5 + x_6 + R_1&= 76 \\
+    x_2 - x_3 + x_4 + 3x_6 + S_1 &= 18 \\
+    x_1 + x_2 - 3x_3 + x_4 + x_5 + S_2 &= 12 \\
+    x_1 + x_2 + x_6 - S_3 +R_2 &= 50
+\end{align}
+with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6, S_1, S_2, S_3, R_1, R_2\geq 0$.\\
+\newpage
+The LLP is now in canonical form and is ready for simplex.
+
+\subsection{Revised Simplex Algorithm}
+The Revised Simplex Algorithm is a variant of the Simplex Algorithm that is used to solve linear programming problems. It uses inverse matrices to simplifiy the calculations for computers. \\
+
+The question consists of m constraints and n variables. The matrix A is $m \times n$ and is defined and defined as follows:
+
+\begin{align}
+    A = \begin{bmatrix}
+        | & | &   & | \\
+        \underline{P_1} & \underline{P_2} & \cdots & \underline{P_n} \\
+        | & | &   & |
+    \end{bmatrix}
+\end{align}
+
+The matrix A is partitioned into two matrices, $B$ and $N$, where $B$ is a $m \times m$ matrix and $N$ is a $m \times (n-m)$ matrix. The matrix $B$ is the basis matrix and the matrix $N$ is the non-basis matrix. The matrix $B$ is initially the identity matrix due to choosing slack and artificial variables. The matrix $N$ is the matrix of non-basic variables. The matrix $A$ is then defined as:
+\begin{align}
+    A = \begin{bmatrix}
+        B & N
+    \end{bmatrix}
+\end{align}
+
+We then see if the current solution is valid. Since we chose the basis using the slack and artificial variables, we know that it is valid. The amount of basic solutions is equal to $\binom{n}{m}$. This grows exponentially so it is impractical to enumerate all possible solutions.
+
+\subsubsection{Optimality Test}
+The optimality test is used to determine if the current solution is optimal. The optimality test is defined as:
+\begin{align}
+    \underline{c_N} - \underline{c_B^T} B^{-1} N 
+\end{align}
+where $c_B$ is the cost vector of the basic variables, $c_N$ is the cost vector of the non-basic variables, and $B^{-1}$ is the inverse of the basis matrix.
+There are three possibilities for the optimality test:
+\begin{itemize}
+    \item If all values in the optimality test positive, then any $x_B$ will increase $z$ so we're at the minimum.
+    \item If all values are positive or zero, then the current solution is a non unique optima.
+    \item If there is a negative value, then the current solution is not optimal. In this case, continue the algorithm.
+\end{itemize}
+We choose the most negative value as the entering variable. This is the variable that will enter the basis.
+\subsubsection{Feasibility Test}
+As we have found an entering variable, we find the associated column of N and call it $a_E$. We then find the ratio of the right hand side to the column. If all values are negative, then the problem is unbounded. If there is a positive value, then we choose the smallest value as the leaving variable. This is the variable that will leave the basis.
+
+Finally, we update the entering column of N, remove the leaving column from B and update the coefficients of the objective function. We then repeat until we reach the optimal solution.
+
+\newpage
+\section{Implementation}
+For this project, we used Python for access to the NumPy module and MatPlotLib for graphing. The code was written in a modular fashion, with each function performing a specific task.
+\subsection{Representation of the Problem}
+Before doing any simplex calculations on the question, we had to parse the question into a form that python could understand. For our representation, we used 5 data structures:
+\begin{itemize}
+    \item Nature: This is a binary value that represents whether the problem is a maximisation or minimisation problem. If the problem is a maximisation problem, the value is -1, otherwise it is 1.
+    \item A: This is a matrix that represents the coefficients of the constraints. Each row represents a constraint, and each column represents a variable.
+    \item b: This is a vector that represents the right-hand side of the constraints. Each row represents a constraint.
+    \item c: This is a vector that represents the coefficients of the objective function. Each column represents a variable.
+    \item Signs: This is a vector that represents the signs of the constraints. Each row represents a constraint. The value -1 represents a less than or equal to constraint, 0 represents an equal to constraint, and 1 represents a greater than or equal to constraint.
+\end{itemize}
+\newpage
+\subsection{Main Method}
+The main method is the entry point for the program. It is where the question is inputted and the functions are called. When using this project, this is the only method that needs to be interacted with.
+\subsection{convertToCanonicalForm}
+Documentation for convertToCanonicalForm is as follows:
+\begin{lstlisting}
+    Converts the LLP to canonical form.
+
+        Args:
+            c (numpy.ndarray): Coefficients of the objective function.
+            A (numpy.ndarray): Coefficient matrix of the constraints.
+            b (numpy.ndarray): Right-hand side of the constraints.
+            signs (numpy.ndarray): List of indices of the basic variables.
+
+        Returns:
+            c (numpy.ndarray): Canonical Coefficients of the objective function.
+            A (numpy.ndarray): Canonical Coefficient matrix of the constraints.
+            b (numpy.ndarray): Canonical Right-hand side of the constraints.
+            signs (list): List of {0} of length of constraints.
+            basicIndices (list): List of indices of the basic variables.
+            artificalIndices (list): List of indices of the artificial variables.
+\end{lstlisting}
+\subsection{revisedSimplexMethod}
+Documentation for revisedSimplexMethod is as follows:
+\begin{lstlisting}
+    Performs the revised simplex method to solve a linear programming problem.
+
+        Args:
+            c (numpy.ndarray): Coefficients of the objective function.
+            A (numpy.ndarray): Coefficient matrix of the constraints.
+            b (numpy.ndarray): Right-hand side of the constraints.
+            basic_vars (list): List of indices of the basic variables.
+
+        Returns:
+            dict: A dictionary containing the optimal value, the optimal solution, and the status of the solution.
+\end{lstlisting}
+\subsection{renderLPP}
+
+\subsection{graphing}
+
+\newpage
+\section{Verification}
+For verification, we used the given question: \\ \\
+Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$, subject to
+\begin{align}
+    x_1 - x_2 + x_3 + x_5 + x_6 &= 76 \label{ver1:constraint1} \\
+    x_2 - x_3 + x_4 + 3x_6 &\leq 18 \label{ver1:constraint2} \\
+    x_1 + x_2 - 3x_3 + x_4 + x_5 &\leq 12 \label{ver1:constraint3} \\
+    x_1 + x_2 + x_6 &\geq 50 \label{ver1:constraint4}
+\end{align}
+with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6 \geq 0$. \\ 
+We then used the Python package SciPy to solve the question. The representation of the question in SciPy is as follows:
+\begin{lstlisting}[language=Python, basicstyle=\scriptsize, frame=single]
+    import numpy as np
+    from scipy.optimize import linprog
+
+    c = np.array([7, 0, 11, -10,-1,26])
+    Aup = np.array([[0, 1, -1, 1, 0, 3],
+                    [1, 1, -3, 1, 1, 0],
+                    [-1, -1, 0, 0, 0, -1]])
+    bup = np.array([18, 12, -50])
+    Aeq = np.array([[1, -1, 1, 0, 1, 1]])
+    beq = np.array([76])
+\end{lstlisting}
+Since SciPy's method doesn't support the greater than or equal to constraints, we had to alter (\ref{ver1:constraint4}) by multiplying both sides of the equation by -1 and flipping the inequality. 
+\begin{equation}
+    -x_1 - x_2 - x_6 \leq -50
+\end{equation}
+We then used the SciPy method linprog to solve the question. The results were as follows:
+\begin{lstlisting}[language=Python, basicstyle=\scriptsize, frame=single]
+    res = linprog(c,Aup,bup,Aeq,beq)
+    print(res)
+\end{lstlisting}
+\begin{lstlisting}[language=Python, basicstyle=\scriptsize]
+    message: Optimization terminated successfully. (HiGHS Status 7: Optimal)
+    success: True
+     status: 0
+        fun: 200.0
+          x: [ 4.920e+01  8.000e-01  2.760e+01  4.480e+01  0.000e+00
+               0.000e+00]
+        nit: 5
+      lower:  residual: [ 4.920e+01  8.000e-01  2.760e+01  4.480e+01
+                          0.000e+00  0.000e+00]
+             marginals: [ 0.000e+00  0.000e+00  0.000e+00  0.000e+00
+                          1.000e+00  4.500e+01]
+      upper:  residual: [       inf        inf        inf        inf
+                                inf        inf]
+             marginals: [ 0.000e+00  0.000e+00  0.000e+00  0.000e+00
+                          0.000e+00  0.000e+00]
+      eqlin:  residual: [ 0.000e+00]
+             marginals: [-1.000e+00]
+    ineqlin:  residual: [ 0.000e+00  0.000e+00  0.000e+00]
+             marginals: [-9.000e+00 -1.000e+00 -9.000e+00]
+    mip_node_count: 0
+    mip_dual_bound: 0.0
+    mip_gap: 0.0
+\end{lstlisting}
+The solution of the question corresponds with the "fun" value in the dictionary output. The value of the objective function is 200.0, which matches the value we found using the Revised Simplex Method. This verifies that our implementation is correct.
+
+\newpage
+\section{Sensitivity Analysis}
+Performing a sensitivity analysis inspects how the optimal solution to a LPP responds to changes in its parameters. The analysis will help to assess the robustness of the optimal solution found using the Revised Simplex Method. For this, sensitivity analysis was performed on the Right-Hand Side (RHS) of constraints and how it affects the optimum value and the feasibility of a solution.  
+\\ \\
+Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$ subject to
+\begin{align}
+    x_1 - x_2 + x_3 + x_5 + x_6 &= 76 \\
+    x_2 - x_3 + x_4 + 3x_6 &\leq 18 \\
+    x_1 + x_2 - 3x_3 + x_4 + x_5 &\leq 12 \\
+    x_1 + x_2 + x_6 &\geq 50
+\end{align}
+with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6 \geq 0$.
+
+\newpage
+\section{Conclusion}
+
+\end{document}
