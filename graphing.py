@@ -46,8 +46,8 @@ for j in range(0,len(b)):
 plt.xlabel('b Value')
 plt.ylabel('Solution')
 lgnd=plt.legend(fontsize=10,loc='upper left',fancybox=True,shadow=True,bbox_to_anchor=(1,0.5),)
-#for i in range(0,len(c)):
-    #lgnd.legend_handles[i]._sizes=[30]
+for i in range(0,len(b)):
+    lgnd.legend_handles[i]._sizes=[30]
 plt.title("Solution varying b value in each constraint ")
 plt.tight_layout()
 plt.show()
