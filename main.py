@@ -14,6 +14,7 @@ signs = np.array([0, -1, -1, 1])  # 1 is >= , -1 is <= , 0 is =
 
 tolerance = 1e-7
 cCopy = c*nature
+feasible=True
 
 cNew, ANew, bNew, signsNew, basicIndices, artificialIndices, validInput = convertToCanonicalForm(c, A, b, signs)
 
@@ -23,17 +24,23 @@ if validInput:
     renderLPP(1, cNew, ANew, bNew, signsNew)
 
     ans = revisedSimplexMethod(cNew, ANew, bNew, basicIndices)
-
     if ans['status'] == "Unbounded solution":
         print("Unbounded solution")
     else:
-        errorCheck = round(ans['optimal_value'])
-        if abs(abs(errorCheck) - abs(ans['optimal_value']))<tolerance:
-            ans['optimal_value'] = errorCheck
-        else:
-            ans['optimal_value'] = round(ans['optimal_value'],5)
-        print("\n\n-------------------------------------------------\n")
-        print("Optimal Value: ", nature * ans['optimal_value'])
-        print("Optimal Solution: ", ans['x'])
-        print("Status: ", ans['status'])
-        print("\n-------------------------------------------------")
+        if len(artificialIndices)>0:
+            for i in range(0,len(artificialIndices)):
+                if ans['x'][artificialIndices[i]]!=0 : #Feasibility check ( Artificial variabled should =0 in equation)
+                    feasible=False
+                    print("\n\n-------------------------------------------------\n")
+                    print("Solution is Infeasible.")
+        if feasible==True:
+            errorCheck = round(ans['optimal_value'])
+            if abs(abs(errorCheck) - abs(ans['optimal_value']))<tolerance:
+                ans['optimal_value'] = errorCheck
+            else:
+                ans['optimal_value'] = round(ans['optimal_value'],5)
+            print("\n\n-------------------------------------------------\n")
+            print("Optimal Value: ", nature * ans['optimal_value'])
+            print("Optimal Solution: ", ans['x'])
+            print("Status: ", ans['status'])
+            print("\n-------------------------------------------------")
