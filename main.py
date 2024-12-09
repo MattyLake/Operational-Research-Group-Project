@@ -2,7 +2,6 @@ import numpy as np
 from simplex import revisedSimplexMethod
 from bfs import convertToCanonicalForm, renderLPP
 
-
 # ------------------------- Enter LPP Below Line --------------------------------
 
 nature = 1                                             # CW Example // Solution should be 200

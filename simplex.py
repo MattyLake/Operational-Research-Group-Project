@@ -1,7 +1,19 @@
 import numpy as np
 
-def revisedSimplexMethod(c, A, b, basic_vars):
 
+def revisedSimplexMethod(c, A, b, basic_vars):
+    """
+        Performs the revised simplex method to solve a linear programming problem.
+
+        Args:
+            c (numpy.ndarray): Coefficients of the objective function.
+            A (numpy.ndarray): Coefficient matrix of the constraints.
+            b (numpy.ndarray): Right-hand side of the constraints.
+            basic_vars (list): List of indices of the basic variables.
+
+        Returns:
+            dict: A dictionary containing the optimal value, the optimal solution, and the status of the solution.
+        """
     m, n = A.shape
     non_basic_vars = [i for i in range(n) if i not in basic_vars]
     iteration = 0
