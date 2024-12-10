@@ -127,7 +127,7 @@ As we have code to convert the LPP (Linear Programming Problem) to canonical for
 \subsection{Main Method}
 The main method is the entry point for the program. It is where the question is inputted and the functions are called. When using this project, this is the only method that needs to be interacted with.
 \subsection{Converting to Canonical Form}
-The function convertToCanonicalForm in file bfs.py is used to convert the LPP to canonical form. The function takes the LPP in our parsing style as input and returns the LPP in canonical form. It also introduces artificial variables to the LPP to make a basic feasible solution along with amending the objective function with a large M value if required.\\
+The function convertToCanonicalForm in file bfs.py is used to convert the LPP to canonical form. The function takes the LPP in our parsing style as input and returns the LPP in canonical form. It also introduces artificial variables to the LPP to make a basic feasible solution along with amending the objective function artificial coefficients with a large M value if required.\\
 The function requires a valid LPP to work. We added a check to see if the LPP is valid before running the function.\\
 It takes each constraint and does 1 of 3 things:
 \begin{itemize}
@@ -303,7 +303,7 @@ Notable similarities can be observed between the graphs:
 \subsection{Behaviour of the Objective Function}
 \begin{wrapfigure}{r}{0.6\textwidth}
     \centering
-    \includegraphics[width=0.6\textwidth]{Media/Graphs/solutionsVaryb.png}
+    \includegraphics[width=0.6\textwidth]{Media/Graphs/solutionVaryb.png}
 \end{wrapfigure}
 From this graph a clear idea of the strengths of the constraints can be shown. Firstly, constraints 2 and 4 show the greatest strength, this is shown through the smallest of adjustments to their value, massively impacts the solution. This can't be said for constraints 1 and 3, as from the graph it shows that when altered, the solution doesn't change much and stays fairy level. Furthermore, the graph highlights the infeasibility of certain constraints and when this takes place. For constraint 3, this is for values over 112 where the line is cut off, meaning the solution has become infeasible. Similarly for constraint 4, over 161 is where the line cuts off and the solution is infeasible. In order to produce a smaller optimal solution, increasing the b value of constraint 2 will minimise the solution the greatest. Constraint 4 is the opposite, where increasing the b will directly hinder the minimisation process by increasing the optimal solution the most. \\ \\
 If the constraints were treated as a weight, then we can calculate their worth via the gradient of their respective lines in the graph:
