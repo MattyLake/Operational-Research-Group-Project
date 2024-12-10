@@ -52,7 +52,7 @@
 \newpage
 
 \section{Algorithm Explanation}
-The question we recieved  isn't able to be solved using the Simplex Method as it is. The Simplex Method is used to solve linear programming problems exclusively in the canonical form. So the first step is to sanitise the question and put it in the correct form.
+The question we recieved isn't able to be solved using the Simplex Method as it is. The Simplex Method is used to solve linear programming problems exclusively in the canonical form. So the first step is to sanitise the question and put it in the correct form.
 \subsection{Converting to Canonical Form}
 The question we were asked to solve was as follows: \\ \\
 Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$,\\Subject to constraints:
@@ -79,7 +79,7 @@ Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$, subject to
     x_1 + x_2 + x_6 - S_3&= 50 \label{lpp2:constraint4}
 \end{align}
 with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6, S_1, S_2, S_3\geq 0$.\\ \\
-However (\ref{lpp2:constraint4}) violates the non-negativity constraint, so to fix that we need to introduce artificial variables to the LPP. In order to make a basic feasible solution we need to add artificial variables to both (\ref{lpp2:constraint1}) and (\ref{lpp2:constraint4}). We will also amend the objective function with a large M value. This will be used in calculations so the artificial variables tend to 0 as iterations progress. So now the problem becomes: \\ \\
+However (\ref{lpp2:constraint4}) violates the non-negativity constraint, so to fix that we need to introduce artificial variables to the LPP. In order to make a basic feasible solution we need to add artificial variables to both (\ref{lpp2:constraint1}) and (\ref{lpp2:constraint4}). We will also amend the objective function artificial variable coefficients with a large M value. This will be used in calculations so the artificial variables tend to 0 as iterations progress. So now the problem becomes: \\ \\
 Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6 + M(R_1 + R_2)$, subject to
 \begin{align}
     x_1 - x_2 + x_3 + x_5 + x_6 + R_1&= 76 \\
@@ -113,11 +113,11 @@ On paper, we solved a slightly simpler version of the question we were given. We
 \includegraphics[width=\textwidth]{Media/Cut 3.png}
 \newpage
 \section{Implementation}
-For this project, we used Python for access to the NumPy module and MatPlotLib for graphing. The code was written in a modular fashion, with each function performing a specific task.
+For this project, we used Python since it has access the NumPy module and MatPlotLib for graphing. NumPy is more efficient than basic Python script since it has been written in C. The code was written in a modular fashion, with each function performing a specific task.
 \subsection{Representation of the Problem}
-Before doing any simplex calculations on the question, we had to parse the question into a form that python could understand. For our representation, we used 5 data structures:
+Before doing any simplex calculations on the question, we had to parse the question into a form that Python could understand. For our representation, we used 5 data structures:
 \begin{itemize}
-    \item Nature: This is a binary value that represents whether the problem is a maximisation or minimisation problem. If the problem is a maximisation problem, the value is -1, otherwise it is 1.
+    \item Nature: This is a binary value that represents whether the problem is a maximisation or minimisation problem. If the problem is a maximisation problem, the value is -1; if it is a minimisation problem, it is 1.
     \item A: This is a matrix that represents the coefficients of the constraints. Each row represents a constraint, and each column represents a variable.
     \item b: This is a vector that represents the right-hand side of the constraints. Each row represents a constraint.
     \item c: This is a vector that represents the coefficients of the objective function. Each column represents a variable.
@@ -125,16 +125,18 @@ Before doing any simplex calculations on the question, we had to parse the quest
 \end{itemize}
 As we have code to convert the LPP (Linear Programming Problem) to canonical form, we can accept any LPP in any form.
 \subsection{Main Method}
-The main method is the entry point for the program. It is where the question is inputted and the functions are called. When using this project, this is the only method that needs to be interacted with.
+The main method is the entry point for the program. It is where the question is inputted and the functions are called. When using this project, this is the only method that needs to be interacted with for solutions to LPP's.
 \subsection{Converting to Canonical Form}
-The function convertToCanonicalForm in file bfs.py is used to convert the LPP to canonical form. The function takes the LPP in our parsing style as input and returns the LPP in canonical form. It also introduces artificial variables to the LPP to make a basic feasible solution along with amending the objective function artificial coefficients with a large M value if required.\\
-The function requires a valid LPP to work. We added a check to see if the LPP is valid before running the function.\\
+The function convertToCanonicalForm in file bfs.py is used to convert the LPP to canonical form. The function takes the LPP in our parsing style as input and returns the LPP in canonical form.\\
+We added a check to see if the LPP is valid before running the function as a form of data validation.\\
 It takes each constraint and does 1 of 3 things:
 \begin{itemize}
     \item If the constraint is an equality constraint, it adds an artificial variable to the constraint.
     \item If the constraint is a less than or equal to constraint, it adds a slack variable to the constraint.
     \item If the constraint is a greater than or equal to constraint, it adds a surplus and an artificial variable to the constraint.
 \end{itemize}
+Then the function makes all the constraints into equalities. \\
+The function also ammends the objective function to include the artificial variables with a large M value coefficient if required, and then returns the LPP in canonical form.
 
 \subsection{Simplex Method}
 The function revisedSimplexMethod in file simplex.py is used to solve the LPP in canonical form.\\ 
@@ -142,14 +144,14 @@ This uses the exact same algorithm as described in the Algorithm Explanation sec
 It also checks for infeasibility and unboundedness. If the LPP is infeasible, it returns "Solution is Infeasible". If the LPP is unbounded, it returns "Unbounded solution".
 
 \subsection{Parsing the LPP}
-The function renderLPP in file render.py is used to render the LPP. It supports LPP, both canonical and non-canonical form. The function takes the LPP in our parsing style as input and returns a string representation of the LPP.
+The function renderLPP in file render.py is used to render the LPP. It supports LPP's in both canonical and non-canonical form. The function takes the LPP in our parsing style as input and returns a string representation of the LPP.
 
 \subsection{Graphing}
-The function graph in file variableGraphing.py is used to graph the variables. To change which constraint is being varied, you need to change the variable "bVaryNum". Then the function will make a graph of all feasible solutions which exist in the interval [1, 200].\\
-If the interval of feasible solutions is smaller than 200, the interval will be reduced to the size of the feasible interval.
+The file graphing.py is used to make the graph of the value of the objective function as the b value of each constraint is varied independantly. This file is self-contained and is ran separately from the main code.\\
+The file variableGraphing.py is used to graph the specific variables in the solution as the b value of a constraint is varied. This file is self-contained and is ran separately from the main code.
 
 \subsection{Using the Code}
-To use the code to answer the provided question, you must verify that variables in main.py are set correctly. The variables are as follows:
+To use the code to answer the provided question, you must verify that variables in main.py are set correctly. The variables should be as follows:
 \begin{lstlisting}[language=Python, basicstyle=\scriptsize, frame=single]
     nature = 1
     c = nature * np.array([7, 0, 11, -10, -1, 26])
@@ -169,7 +171,7 @@ Once you run main.py, you should see the multiple iterations with each entering 
 \newpage
 \section{Special Cases}
 \subsection{Infeasible Solutions}
-We performed an analysis which investigates whether the solution remains feasible when the constraints of the LPP are altered by varying the value of b.  This was completed using MATLAB's LPP solver. The package systematically adjusted the b values of each constraint independently and gave the number 1 when the solution was feasible and 0 when unfeasible. We concluded when adjusting constraint 1, the solution became infeasible at an extreme b value. This occurred when the b value was decreased by 100 from 76 to -24. We then verified the solution was infeasible using the python "SciPy" simplex package and it produced the following:
+We performed an analysis which investigates whether the solution remains feasible when the constraints of the LPP are altered by varying the value of b.  This was completed using MATLAB's LPP solver. The package systematically adjusted the b values of each constraint independently and gave the number 1 when the solution was feasible and 0 when unfeasible. We concluded when adjusting constraint 1, the solution became infeasible at an extreme b value. This occurred when the b value was decreased by 100 from 76 to -24. We then verified the solution was infeasible using the Python "SciPy" simplex package and it produced the following:
 \begin{lstlisting}
     The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is At lower/fixed bound)
 \end{lstlisting}
@@ -181,7 +183,7 @@ From this analysis we now have an example of a definitive infeasible problem to 
     b = np.array([24, 18, 12, 50])
     signs = np.array([0, -1, -1, 1])
 \end{lstlisting}
-This should produce an infeasible solution as the b value is 24 in order to maintain a positive however to compensate the first constraint in "A" has swapped signs in all values in order to simulate a b value of -24. After an initial test it did produce an optimal value as well as corresponding solution of variables. 
+This should produce an infeasible solution as the b value is 24 in order to maintain a positive, however to compensate the first constraint in "A" has swapped signs in all values in order to simulate a b value of -24. After an initial test it did produce an optimal value as well as a corresponding solution of variables. 
 \begin{lstlisting}
     ---------------------------------------------------------------------------
     Optimal Value:  6682
@@ -189,7 +191,7 @@ This should produce an infeasible solution as the b value is 24 in order to main
     Status:  Optimal solution found
     ---------------------------------------------------------------------------
 \end{lstlisting}
-Not only was the optimal value unusually large compared to previous data but the optimal solution had a 'non-zero' value as an artificial variable. Since the simplex algorithm was not able to filter out all artificial variables to 0 the problem is indeed infeasible. To counteract this problem so that the algorithm can account for other potential infeasible solutions, we adapted the code to check the artificial variables in the optimal solution. It would conclude a status  'Optimal solution found' only if all artificial variables equated to 0. After rerunning the same problem it produced the following:
+Not only was the optimal value unusually large compared to previous data, but the optimal solution had an artificial variable in the basis. Since the simplex algorithm was not able to filter out all artificial variables to 0 the problem is indeed infeasible. To counteract this problem so that the algorithm can account for other potential infeasible solutions, we adapted the code to check the artificial variables in the optimal solution. It would conclude a status  'Optimal solution found' only if all artificial variables equated to 0. After rerunning the same problem it produced the following:
 \begin{lstlisting}
     ---------------------------------------------------------------------------
     Solution is Infeasible.
@@ -212,7 +214,7 @@ In order to confirm it was an unbounded LPP we ran the input against the 'SciPy'
     b = np.array([0, 3, 0])
     signs = np.array([1, -1, 1]) 
 \end{lstlisting}
-Our implemented algorithm checks if the solution is unbounded each iteration thus if it concludes the solution is unbounded it will change the status to 'Unbounded solution' .
+Our implemented algorithm checks if the solution is unbounded each iteration, thus if it concludes the solution is unbounded it will change the status to 'Unbounded solution' .
 Against this example it worked as intended and printed the following, after 4 iterations, rather than an optimal solution:
 \begin{lstlisting}
     ---------------------------------------------------------------------------
@@ -232,9 +234,6 @@ Minimise $z = 7x_1 + 11x_3 - 10x_4 - x_5 + 26x_6$, subject to
 with all variables non-negative: $x_1, x_2, x_3, x_4, x_5, x_6 \geq 0$. \\
 We then used the Python package SciPy to solve the question. The representation of the question in SciPy is as follows:
 \begin{lstlisting}[language=Python, basicstyle=\scriptsize, frame=single]
-    import numpy as np
-    from scipy.optimize import linprog
-
     c = np.array([7, 0, 11, -10,-1,26])
     Aup = np.array([[0, 1, -1, 1, 0, 3],
                     [1, 1, -3, 1, 1, 0],
@@ -276,7 +275,7 @@ We then used the SciPy method linprog to solve the question. The results were as
     mip_dual_bound: 0.0
     mip_gap: 0.0
 \end{lstlisting}
-The solution of the question corresponds with the "fun" value in the dictionary output. The value of the objective function is 200.0, which matches the value we found using the Revised Simplex Method. It also shows it took 5 iterations in the "nit" value which also aligns itself with our calculations. This verifies that our implementation is correct for this question.
+The solution of the question corresponds with the "fun" value in the dictionary output. The value of the objective function is 200.0, which matches the value we found using the Revised Simplex Method. This verifies that our implementation is correct for this question.
 \newpage
 \begin{figure}
     \centering
@@ -305,7 +304,7 @@ Notable similarities can be observed between the graphs:
     \centering
     \includegraphics[width=0.6\textwidth]{Media/Graphs/solutionVaryb.png}
 \end{wrapfigure}
-From this graph a clear idea of the strengths of the constraints can be shown. Firstly, constraints 2 and 4 show the greatest strength, this is shown through the smallest of adjustments to their value, massively impacts the solution. This can't be said for constraints 1 and 3, as from the graph it shows that when altered, the solution doesn't change much and stays fairy level. In order to produce a smaller optimal solution, increasing the b value of constraint 2 will minimise the solution the greatest. Constraint 4 is the opposite, where increasing the b will directly hinder the minimisation process by increasing the optimal solution the most. \\ \\
+From this graph a clear idea of the strengths of the constraints can be shown. Firstly, constraints 2 and 4 show the greatest strength, this is shown through the smallest of adjustments to their value, massively impacts the solution. This can't be said for constraints 1 and 3, as from the graph it shows that when altered, the solution doesn't change much and stays fairly level. In order to produce a smaller optimal solution, increasing the b value of constraint 2 will minimise the solution the greatest. Constraint 4 is the opposite, where increasing the b will directly hinder the minimisation process by increasing the optimal solution the most. \\ \\
 If the constraints were treated as a weight, then we can calculate their worth via the gradient of their respective lines in the graph:
 \begin{itemize}
     \item Constraint 1: at b=1, Solution = 276 and at b = 200, Solution = 157.33,    Gradient = -0.596
@@ -313,29 +312,30 @@ If the constraints were treated as a weight, then we can calculate their worth v
     \item Constraint 3: at b=1, Solution = 211 and at b = 200, Solution = 144, Gradient = -0.337
     \item Constraint 4: at b=1, Solution = -193.33333 and at b = 200, Solution = 1626, Gradient = 9.142
 \end{itemize}
+Since we are minimising the objective function in this question, the more negative the gradient, the more the constraint is contributing to the minimisation of the objective function.
 \subsection{Constraint 1}
 \begin{wrapfigure}{r}{0.6\textwidth}
     \centering
     \includegraphics[width=0.6\textwidth]{Media/Graphs/valuesVaryb1.png}
 \end{wrapfigure}
-It can be seen that both variables $x_3$ and $x_4$ steadily increase at near the same rate, as the b value is increased. Furthermore, the same with all the constraints, there is a shift in the basis variables of $x_2$ and $x_5$ which can be highlighted. This is where when one variable is contributing, the other one is not involved and is zero. It can be seen, $x_1$ variable after the b value of 78 stay consistent from then on. 
+It can be seen that both variables $x_3$ and $x_4$ steadily increase at near the same rate, as the b value is increased. It can also be observed that there is a shift in the basis variables of $x_2$ and $x_5$ which can be highlighted. This is where one variable is contributing, the other one is not involved and is zero. It can be seen that $x_1$, after the b value of 78, stays consistent from then on. 
 \newpage
 \subsection{Constraint 2}
 \begin{wrapfigure}{r}{0.6\textwidth}
     \centering
-    \includegraphics[width=0.6\textwidth]{Media/Graphs/valuesVaryb2.png}
+    \includegraphics[width=0.5\textwidth]{Media/Graphs/valuesVaryb2.png}
 \end{wrapfigure}
 We notice variable $x_4$ consistently increases as the b value is increased, this shows its importance and when relaxing the constraint resources are reallocated to $x_4$, for an optimal solution. The non-basic variable $x_5$ becomes active for the extremely low b values, where $x_1$ is seen to steadily decrease, crossing over with multiple other variables.  Both variables $x_2$ and $x_3$ follow the same trajectory upwards as the b value is increased. 
 \subsection{Constraint 3}
 \begin{wrapfigure}{r}{0.6\textwidth}
     \centering
-    \includegraphics[width=0.6\textwidth]{Media/Graphs/valuesVaryb3.png}
+    \includegraphics[width=0.49\textwidth]{Media/Graphs/valuesVaryb3.png}
 \end{wrapfigure}
-Again, $x_1$ staying the same value from around b value of 17. This takes place at the same time as variable $x_5$ becomes active again and increases fast. The non-basic variable $x_6$ remains inactive, as it does in all constraints. Variable $x_1$ is observed to be very strong in this constraint and is clearly important for optimality. 
+Again, $x_1$ staying the same value from around b value of 17. This takes place at the same time as variable $x_5$ becomes active again and increases fast. The non-basic variable $x_6$ remains inactive, as it does in all constraints. Variable $x_1$ is observed to be very strong in this constraint and is clearly important for optimality.
 \subsection{Constraint 4}
 \begin{wrapfigure}{r}{0.6\textwidth}
     \centering
-    \includegraphics[width=0.6\textwidth]{Media/Graphs/valuesVaryb4.png}
+    \includegraphics[width=0.48\textwidth, ]{Media/Graphs/valuesVaryb4.png}
 \end{wrapfigure}
 In this constraint the intersection of variables $x_1$ and $x_4$ can be seen clearly, where when the b value is increased, $x_1$ increases whilst $x_4$ decreases. This relationship suggests $x_1$ and $x_4$ are competing variables in this constraint and so, respond inversely to changes to the b value. The same $x_2$ and $x_5$ relationship is shown, with $x_5$ leaving, as $x_2$ enters. The variable $x_3$ is seen to steadily increase as the b value increases, when passed b = 50. 
 \newpage
