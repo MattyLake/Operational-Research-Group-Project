@@ -1,7 +1,7 @@
 import numpy as np
 from simplex import revisedSimplexMethod
 import matplotlib.pyplot as plt
-from bfs import convertToCanonicalForm
+from bfsGraphing import convertToCanonicalForm
 
 
 colours = ['black', 'g', 'b','r','c','m','y']
@@ -14,7 +14,7 @@ A = np.array([[1, -1, 1, 0, 1, 1], [0, 1, -1, 1, 0, 3], [1, 1, -3, 1, 1, 0], [1,
 b = np.array([76, 18, 12, 50])
 signs = np.array([0, -1, -1, 1])  # 1 is >= , -1 is <= , 0 is =
 tempArray=[]
-bVaryNum=4 # pick constraint number to vary b in starting from 1,2,3 etc
+bVaryNum=2 # pick constraint number to vary b in starting from 1,2,3 etc
 
 for i in range (1,200):
     feasible=True
@@ -28,8 +28,7 @@ for i in range (1,200):
     else:
         if len(artificialIndices) > 0:
             for m in range(0, len(artificialIndices)):
-                if solution['x'][
-                    artificialIndices[m]] != 0:  # Feasibility check ( Artificial variables should =0 in equation)
+                if solution['x'][artificialIndices[m]] != 0:  # Feasibility check ( Artificial variables should =0 in equation)
                     feasible = False
         if feasible == True:
             bArray.append(i)
@@ -42,7 +41,7 @@ for i in range(0,len(c)):
 
     plt.scatter(bArray, tempArray, label='x_'+str(i+1), s=2, marker='o',color=colours[i])
 
-
+print(artificialIndices)
 plt.xlabel('b Value')
 plt.ylabel('Value in Solution')
 lgnd=plt.legend(fontsize=10,loc='upper left',fancybox=True,shadow=True,bbox_to_anchor=(1,0.5),)
