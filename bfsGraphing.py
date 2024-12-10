@@ -1,5 +1,6 @@
 import numpy as np
 
+# Same as bfs.py however, sign change has been removed to avoid looping error in graphing
 
 def convertToCanonicalForm(c, A, b, signs):
     """
@@ -21,10 +22,10 @@ def convertToCanonicalForm(c, A, b, signs):
         """
     M = 1000  # Big M
     for i in range(len(c)):
-        M = M + abs(c[i])
-    signsNewer = signs
+        M = M + abs(c[i]) # Ensures M is proportionally big compared to the inputted question
+    signsNew = signs
 
-    # Validation of input, if invalid return 0
+    # Validation of input, if invalid return 0 (Checks dimensions are correct, b values are positive and sign values are valid)
     validInput = True
     for i in range(0, len(b)):
         if b[i] < 0:
@@ -40,30 +41,46 @@ def convertToCanonicalForm(c, A, b, signs):
     basicIndices = np.array([])
     artificialIndices = np.array([])
     numConstraints = len(signs)
+
+    # Loops through constraints adding slack,surplus and artificial variables where needed
     for i in range(0, numConstraints):
+
+        # If sign is <= then it will add a single slack variable to LPP
+
         if signs[i] == -1:  # <=
             newColumn = np.zeros((numConstraints, 1))
             for j in range(0, numConstraints):
                 if j == i:
                     newColumn[j, 0] = 1
+
+                    # Adds slack variable to A in current constraint as and 0 in other constraints
                     A = np.append(A, newColumn, axis=1)
+                    # Stores position of new slack variable in basicIndices as it is always an initial basic variable
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
+                    # Adds 0 to c as the added slack variable is not in objective function but dimensions must be kept consistent
                     c = np.append(c, 0)
 
+        # If sign is >= then it will add a surplus variable and an artificial variable to the LPP
         elif signs[i] == 1:  # >=
             for j in range(0, numConstraints):
                 newColumn = np.zeros((numConstraints, 1))
                 if j == i:
+                    # Adds surplus variable to A in current constraint as and 0 in other constraints
                     newColumn[j, 0] = -1
                     A = np.append(A, newColumn, axis=1)
                     c = np.append(c, 0)
+
+                    # Adds artificial variable the through the same method as a slack variable however M is added to objective function
                     newColumn = np.zeros((numConstraints, 1))
                     newColumn[j, 0] = 1
                     A = np.append(A, newColumn, axis=1)
+
+                    # Stores position of artificial variable in basic and artifical Indices as it is always initially a basic variable
                     basicIndices = np.append(basicIndices, len(A[1]) - 1)
                     artificialIndices = np.append(artificialIndices, len(A[1]) - 1)
                     c = np.append(c, M)
 
+        # If sign is = then it will add a single artificial variable
         elif signs[i] == 0:  # =
             newColumn = np.zeros((numConstraints, 1))
             for j in range(0, numConstraints):
@@ -75,4 +92,4 @@ def convertToCanonicalForm(c, A, b, signs):
                     c = np.append(c, M)
 
 
-    return c, A, b, signsNewer, basicIndices.astype(int), artificialIndices.astype(int), validInput
+    return c, A, b, signsNew, basicIndices.astype(int), artificialIndices.astype(int), validInput
