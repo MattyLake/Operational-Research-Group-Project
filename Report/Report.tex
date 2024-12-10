@@ -127,7 +127,7 @@ As we have code to convert the LPP (Linear Programming Problem) to canonical for
 \subsection{Main Method}
 The main method is the entry point for the program. It is where the question is inputted and the functions are called. When using this project, this is the only method that needs to be interacted with.
 \subsection{Converting to Canonical Form}
-The function convertToCanonicalForm in file bfs.py is used to convert the LPP to canonical form. The function takes the LPP in our parsing style as input and returns the LPP in canonical form. It also introduces artificial variables to the LPP to make a basic feasible solution along with amending the objective function with a large M value if required.\\
+The function convertToCanonicalForm in file bfs.py is used to convert the LPP to canonical form. The function takes the LPP in our parsing style as input and returns the LPP in canonical form. It also introduces artificial variables to the LPP to make a basic feasible solution along with amending the objective function artificial coefficients with a large M value if required.\\
 The function requires a valid LPP to work. We added a check to see if the LPP is valid before running the function.\\
 It takes each constraint and does 1 of 3 things:
 \begin{itemize}
@@ -303,7 +303,7 @@ Notable similarities can be observed between the graphs:
 \subsection{Behaviour of the Objective Function}
 \begin{wrapfigure}{r}{0.6\textwidth}
     \centering
-    \includegraphics[width=0.6\textwidth]{Media/Graphs/solutionsVaryb.png}
+    \includegraphics[width=0.6\textwidth]{Media/Graphs/solutionVaryb.png}
 \end{wrapfigure}
 From this graph a clear idea of the strengths of the constraints can be shown. Firstly, constraints 2 and 4 show the greatest strength, this is shown through the smallest of adjustments to their value, massively impacts the solution. This can't be said for constraints 1 and 3, as from the graph it shows that when altered, the solution doesn't change much and stays fairy level. In order to produce a smaller optimal solution, increasing the b value of constraint 2 will minimise the solution the greatest. Constraint 4 is the opposite, where increasing the b will directly hinder the minimisation process by increasing the optimal solution the most. \\ \\
 If the constraints were treated as a weight, then we can calculate their worth via the gradient of their respective lines in the graph:
@@ -331,13 +331,13 @@ We notice variable $x_4$ consistently increases as the b value is increased, thi
     \centering
     \includegraphics[width=0.6\textwidth]{Media/Graphs/valuesVaryb3.png}
 \end{wrapfigure}
-Again, $x_1$ staying the same value from around a b value of 17 to 93 but drops rapidly at the extremely high b values. This takes places at the same time variable $x_2$ becomes active again and increases fast. The non-basic variable $x_6$ remains inactive, as it does in all constraints. Variable $x_5$ is observed to be very strong in this constraint and is very clearly important for the optimality. 
+Again, $x_1$ staying the same value from around b value of 17. This takes place at the same time as variable $x_5$ becomes active again and increases fast. The non-basic variable $x_6$ remains inactive, as it does in all constraints. Variable $x_1$ is observed to be very strong in this constraint and is clearly important for optimality. 
 \subsection{Constraint 4}
 \begin{wrapfigure}{r}{0.6\textwidth}
     \centering
     \includegraphics[width=0.6\textwidth]{Media/Graphs/valuesVaryb4.png}
 \end{wrapfigure}
-In this constraint the crossover of variables $x_1$ and $x_4$ can be seen clearly, where when the b value is increased, $x_1$ increases whilst $x_4$ decreases. This relationship suggests $x_1$ and $x_4$ are competing variables in this constraint and so respond inversely to changes to the b value. The same $x_2$ and $x_5$ relationship is shown, with $x_5$ leaving, as $x_2$ enters. The variable $x_3$ is seen to steadily increase as the b value increases, when passed b = 44. 
+In this constraint the intersection of variables $x_1$ and $x_4$ can be seen clearly, where when the b value is increased, $x_1$ increases whilst $x_4$ decreases. This relationship suggests $x_1$ and $x_4$ are competing variables in this constraint and so, respond inversely to changes to the b value. The same $x_2$ and $x_5$ relationship is shown, with $x_5$ leaving, as $x_2$ enters. The variable $x_3$ is seen to steadily increase as the b value increases, when passed b = 50. 
 \newpage
 \section{Conclusion}
 Through this project, we have produced a functioning implementation of the Revised Simplex Method in Python.
